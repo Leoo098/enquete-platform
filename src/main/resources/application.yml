@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: enquete
+  datasource:
+    url: jdbc:postgresql://localhost:5433/enquete
+    username: postgres
+    password: postgres
+#    driver-class-name: org.postgresql.Driver  --> optional
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate.format_sql: true
