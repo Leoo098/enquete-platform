@@ -31,8 +31,8 @@ public class UserRepositoryTest {
         User user = userRepository.findById(UUID.fromString("bfbfbc85-42ee-44a3-98da-e0c44642bf13")).orElse(null);
 
         //OU
-//        var id = UUID.fromString("bfbfbc85-42ee-44a3-98da-e0c44642bf13");
-//        Optional<User> possibleUser = userRepository.findById(id);
+//        var optionId = UUID.fromString("bfbfbc85-42ee-44a3-98da-e0c44642bf13");
+//        Optional<User> possibleUser = userRepository.findById(optionId);
 
         if (user != null) {
             user.setEmail("leo010@gmail.com");

@@ -10,7 +10,7 @@ public interface GenericController {
     default URI generateHeaderLocation(UUID id){
         return ServletUriComponentsBuilder
                 .fromCurrentRequest()
-                .path("/{id}")
+                .path("/{pollId}")
                 .buildAndExpand(id)
                 .toUri();
     }

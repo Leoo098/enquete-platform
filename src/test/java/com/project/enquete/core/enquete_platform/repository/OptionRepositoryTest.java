@@ -1,6 +1,7 @@
 package com.project.enquete.core.enquete_platform.repository;
 
 import com.project.enquete.core.enquete_platform.model.Option;
+import com.project.enquete.core.enquete_platform.model.Vote;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,17 +10,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import java.util.stream.Collectors;
 
 @SpringBootTest
 public class OptionRepositoryTest {
 
     @Autowired
     OptionRepository repository;
+    @Autowired
+    VoteRepository voteRepository;
 
     @Test
-    public void salvarTest(){
+    public void saveTest(){
         List<Option> list = new ArrayList<>();
 
         Option opt1 = new Option();
@@ -47,8 +49,22 @@ public class OptionRepositoryTest {
 
         repository.deleteById(id);
 
-        //assertFalse(repository.existsById(id));
+        //assertFalse(repository.existsById(optionId));
 
         System.out.println("Opção removida: " + findOption);
     }
+
+    @Test
+    @Transactional
+    public void returnVotes(){
+        List<Vote> list = voteRepository.findAll();
+
+        var votes = list.stream()
+                .filter(v -> v.getOption().getId() == 5L)
+                .collect(Collectors.toList());
+
+        votes.forEach(System.out::println);
+    }
+
+
 }

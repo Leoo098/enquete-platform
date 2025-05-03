@@ -25,4 +25,12 @@ public class Option {
 
     @OneToMany(mappedBy = "option", cascade = CascadeType.ALL)
     private List<Vote> votes;
+
+    @Override
+    public String toString() {
+        return "Option{" +
+                "optionId=" + id +
+                ", text='" + text + '\'' +
+                '}';
+    }
 }

@@ -1,12 +1,13 @@
 package com.project.enquete.core.enquete_platform.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "votes")
+@Data
 public class Vote {
 
     @Id
@@ -24,6 +25,6 @@ public class Vote {
     @Column(nullable = false)
     private Instant votedAt;
 
-    @Column(nullable = false)
-    private String ipAdress;
+    @Column//(nullable = false)
+    private String deviceToken;
 }

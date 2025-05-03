@@ -4,13 +4,16 @@ import com.project.enquete.core.enquete_platform.controller.dto.request.PollDTO;
 import com.project.enquete.core.enquete_platform.controller.dto.response.PollResponseDTO;
 import com.project.enquete.core.enquete_platform.model.Poll;
 import com.project.enquete.core.enquete_platform.model.TimeUnit;
+import com.project.enquete.core.enquete_platform.model.Vote;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface PollMapper {
@@ -24,6 +27,7 @@ public interface PollMapper {
 
     @Mapping(target = "id", source = "poll.id")
     @Mapping(target = "options", source = "options")
+    @Mapping(target = "timeLeft", expression = "java(calculateTimeLeft(poll.getExpiresAt()))")
     PollResponseDTO toResponseDTO(Poll poll, @Context PollDTO requestDTO);
 
     @Named("calculateExpiration")
@@ -32,6 +36,14 @@ public interface PollMapper {
                 pollDTO.duration(),
                 toChronoUnit(pollDTO.timeUnit())
         );
+    }
+
+    default Duration calculateTimeLeft(Instant expiresAt) {
+        return Duration.between(Instant.now(), expiresAt);
+    }
+
+    default Integer mapVotesToInteger(List<Vote> votes) {
+        return votes != null ? votes.size() : 0;
     }
 
     default ChronoUnit toChronoUnit(TimeUnit timeUnit) {
