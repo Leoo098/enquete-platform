@@ -7,10 +7,12 @@ import com.project.enquete.core.enquete_platform.controller.dto.response.PollRes
 import com.project.enquete.core.enquete_platform.controller.mappers.PollMapper;
 import com.project.enquete.core.enquete_platform.model.Option;
 import com.project.enquete.core.enquete_platform.model.Poll;
+import com.project.enquete.core.enquete_platform.model.User;
 import com.project.enquete.core.enquete_platform.model.Vote;
 import com.project.enquete.core.enquete_platform.repository.OptionRepository;
 import com.project.enquete.core.enquete_platform.repository.PollRepository;
 import com.project.enquete.core.enquete_platform.repository.VoteRepository;
+import com.project.enquete.core.enquete_platform.security.SecurityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,11 +27,14 @@ public class PollService {
     private final PollRepository pollRepository;
     private final VoteRepository voteRepository;
     private final OptionRepository optionRepository;
+    private final SecurityService securityService;
     private final PollMapper mapper;
 
     public PollResponseDTO createPoll(PollDTO pollDTO){
         Poll poll = mapper.toEntity(pollDTO);
+        User user = securityService.getLoggedInUser();
         poll.getOptions().forEach(option -> option.setPoll(poll));
+        poll.setCreatedBy(user);
         pollRepository.save(poll);
 
         return mapper.toResponseDTO(poll, pollDTO);
@@ -57,8 +62,9 @@ public class PollService {
 
     public void addVote(VoteDTO dto){
         Option option = optionRepository.findById(dto.optionId());
-
         Vote vote = new Vote();
+        User user = securityService.getLoggedInUser();
+        vote.setUser(user);
         vote.setOption(option);
         vote.setVotedAt(Instant.now());
 

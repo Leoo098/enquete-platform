@@ -15,11 +15,15 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false, length = 70)
+    @Column(nullable = false)
     private String email;
 
-    @Column(nullable = false, length = 70)
+    @Column(nullable = false, length = 60)
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private UserRole role = UserRole.USER;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @Transient

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+        .login-card {
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        .login-header {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            text-align: center;
+        }
+        .login-body {
+            background: white;
+            padding: 30px;
+        }
+        .form-control {
+            height: 50px;
+            border-radius: 8px;
+            padding-left: 45px;
+        }
+        .input-group-text {
+            position: absolute;
+            z-index: 10;
+            height: 50px;
+            background: transparent;
+            border: none;
+        }
+        .btn-login {
+            background: linear-gradient(to right, #667eea, #764ba2);
+            border: none;
+            height: 50px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        .social-login .btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="login-card">
+                <div class="login-header">
+                    <h3 class="mb-3">Bem-vindo de volta!</h3>
+                    <p class="text-muted">Faça login para continuar</p>
+                </div>
+                <div class="login-body">
+                    <form method="post" th:action="@{/login}">
+                        <div class="mb-3">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
+                                <input type="text" class="form-control" id="username" name="username" placeholder="Seu email" required>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Sua senha" required>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="rememberMe">
+                                <label class="form-check-label" for="rememberMe">Lembrar-me</label>
+                            </div>
+                            <a href="#" class="text-decoration-none">Esqueceu a senha?</a>
+                        </div>
+                        <button type="submit" class="btn btn-login btn-primary w-100 text-white mb-3">
+                            Entrar
+                        </button>
+                        <div class="text-center mb-4">
+                            <span class="text-muted">ou entre com</span>
+                        </div>
+                        <div class="social-login text-center mb-3">
+                            <button type="button" class="btn btn-outline-danger">
+                                <i class="fab fa-google"></i>
+                            </button>
+                        </div>
+                        <div class="text-center mt-3">
+                            <p>Não tem uma conta? <a href="#" class="text-decoration-none">Cadastre-se</a></p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
