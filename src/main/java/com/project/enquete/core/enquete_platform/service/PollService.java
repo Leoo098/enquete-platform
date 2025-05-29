@@ -4,6 +4,7 @@ import com.project.enquete.core.enquete_platform.controller.dto.request.PollDTO;
 import com.project.enquete.core.enquete_platform.controller.dto.request.VoteDTO;
 import com.project.enquete.core.enquete_platform.controller.dto.response.OptionResponseDTO;
 import com.project.enquete.core.enquete_platform.controller.dto.response.PollResponseDTO;
+import com.project.enquete.core.enquete_platform.controller.dto.validator.VoteValidator;
 import com.project.enquete.core.enquete_platform.controller.mappers.PollMapper;
 import com.project.enquete.core.enquete_platform.model.Option;
 import com.project.enquete.core.enquete_platform.model.Poll;
@@ -29,6 +30,7 @@ public class PollService {
     private final OptionRepository optionRepository;
     private final SecurityService securityService;
     private final PollMapper mapper;
+    private final VoteValidator voteValidator;
 
     public PollResponseDTO createPoll(PollDTO pollDTO){
         Poll poll = mapper.toEntity(pollDTO);
@@ -67,6 +69,7 @@ public class PollService {
         vote.setUser(user);
         vote.setOption(option);
         vote.setVotedAt(Instant.now());
+        voteValidator.validateVote(vote);
 
         voteRepository.save(vote);
     }

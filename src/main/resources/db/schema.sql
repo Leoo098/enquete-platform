@@ -1,5 +1,6 @@
 create table users(
     id uuid not null primary key,
+    username varchar(20) not null,
     email varchar(255) not null,
     password char(60) not null,
     role varchar(20) not null default 'USER' check (role in('USER', 'ADMIN'))

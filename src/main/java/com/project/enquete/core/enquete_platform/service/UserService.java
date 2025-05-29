@@ -1,6 +1,7 @@
 package com.project.enquete.core.enquete_platform.service;
 
 import com.project.enquete.core.enquete_platform.controller.dto.request.UserDTO;
+import com.project.enquete.core.enquete_platform.controller.dto.validator.UserValidator;
 import com.project.enquete.core.enquete_platform.controller.mappers.UserMapper;
 import com.project.enquete.core.enquete_platform.model.User;
 import com.project.enquete.core.enquete_platform.repository.UserRepository;
@@ -17,9 +18,11 @@ public class UserService {
     private final UserRepository repository;
     private final PasswordEncoder encoder;
     private final UserMapper mapper;
+    private final UserValidator validator;
 
     public void save(UserDTO userDTO){
         User user = mapper.toEntity(userDTO);
+        validator.validateUser(user);
         var password = user.getPassword();
         user.setPassword(encoder.encode(password));
         repository.save(user);

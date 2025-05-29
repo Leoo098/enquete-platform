@@ -1,6 +1,7 @@
 package com.project.enquete.core.enquete_platform.config;
 
 import com.project.enquete.core.enquete_platform.security.CustomUserDetailsService;
+import com.project.enquete.core.enquete_platform.security.SocialLoginSuccessHandler;
 import com.project.enquete.core.enquete_platform.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,8 +23,8 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-        http
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, SocialLoginSuccessHandler successHandler) throws Exception{
+        return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(form -> form
                         .loginPage("/login").permitAll()
@@ -35,9 +36,11 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .logout(LogoutConfigurer::permitAll
-                );
-
-        return http.build();
+                )
+                .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/login")
+                        .successHandler(successHandler))
+                .build();
     }
 
     @Bean
@@ -45,7 +48,7 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder(10);
     }
 
-    @Bean
+//    @Bean
     public UserDetailsService userDetailsService(UserService userService){
         return new CustomUserDetailsService(userService);
     }
