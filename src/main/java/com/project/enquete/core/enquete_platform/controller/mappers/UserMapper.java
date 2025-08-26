@@ -1,6 +1,6 @@
 package com.project.enquete.core.enquete_platform.controller.mappers;
 
-import com.project.enquete.core.enquete_platform.controller.dto.request.UserDTO;
+import com.project.enquete.core.enquete_platform.dto.request.UserDTO;
 import com.project.enquete.core.enquete_platform.model.User;
 import org.mapstruct.Mapper;
 

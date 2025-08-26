@@ -4,7 +4,7 @@ public enum UserRole {
     ADMIN,
     USER;
 
-    public String getAuthority(){
-        return "ROLE_" + this.name();
-    }
+//    public String getAuthority(){
+//        return "ROLE_" + this.name();
+//    }
 }

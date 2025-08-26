@@ -1,7 +1,7 @@
 package com.project.enquete.core.enquete_platform.service;
 
-import com.project.enquete.core.enquete_platform.controller.dto.request.UserDTO;
-import com.project.enquete.core.enquete_platform.controller.dto.validator.UserValidator;
+import com.project.enquete.core.enquete_platform.dto.request.UserDTO;
+import com.project.enquete.core.enquete_platform.dto.validator.UserValidator;
 import com.project.enquete.core.enquete_platform.controller.mappers.UserMapper;
 import com.project.enquete.core.enquete_platform.model.User;
 import com.project.enquete.core.enquete_platform.repository.UserRepository;
@@ -35,5 +35,9 @@ public class UserService {
 
     public User findByEmail(String email){
         return repository.findByEmail(email);
+    }
+
+    public User findByUsername(String login) {
+        return repository.findByUsername(login);
     }
 }

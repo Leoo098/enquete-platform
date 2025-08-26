@@ -27,4 +27,11 @@ public interface PollRepository extends JpaRepository<Poll, UUID> {
     ORDER BY o.id
     """)
     List<OptionStats> getPollResults(@Param("pollId") UUID pollId);
+
+    @Query("""
+        SELECT p FROM Poll p
+        JOIN FETCH p.createdBy u
+        WHERE u.username = :username
+        """)
+    List<Poll> findPollsByUsername(@Param("username") String username);
 }

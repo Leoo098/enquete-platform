@@ -1,7 +1,7 @@
 package com.project.enquete.core.enquete_platform.exceptions;
 
-import com.project.enquete.core.enquete_platform.controller.dto.response.ResponseError;
-import com.project.enquete.core.enquete_platform.controller.dto.response.ValidationError;
+import com.project.enquete.core.enquete_platform.dto.response.ResponseError;
+import com.project.enquete.core.enquete_platform.dto.response.ValidationError;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;

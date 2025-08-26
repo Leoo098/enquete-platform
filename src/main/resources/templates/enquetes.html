@@ -1,0 +1,42 @@
+<!DOCTYPE>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Enquetes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+</head>
+<body>
+    <div th:insert="~{fragments/commons :: header}"></div>
+
+    <div th:if="${polls.empty}" class="alert alert-info">
+        Você ainda não criou nenhuma enquete.
+    </div>
+
+    <div class="container">
+        <div th:unless="${polls.empty}" class="polls-grid">
+            <div th:each="poll : ${polls}" class="poll-card">
+<!--                <div class="poll-image" style="background-image: url('https://source.unsplash.com/random/600x400/?technology');"></div>-->
+                <div class="poll-content">
+                    <h2 th:text="${poll.question}"></h2>
+                        <div th:each="option : ${poll.options}">
+                            <p th:text="${option.text}" class=""></p>
+                        </div>
+                    <div class="poll-meta" style="margin-top: 10px;">
+                        <span>
+                            <i class="far fa-user"></i>
+                            <span th:text="${poll.createdBy.username}"></span>
+                        </span>
+                        <span><i class="far fa-calendar"></i> 2 dias atrás</span>
+                    </div>
+                    <div class="poll-stats">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>1,245 votos</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

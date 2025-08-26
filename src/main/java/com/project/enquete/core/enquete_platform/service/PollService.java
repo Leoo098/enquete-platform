@@ -1,10 +1,10 @@
 package com.project.enquete.core.enquete_platform.service;
 
-import com.project.enquete.core.enquete_platform.controller.dto.request.PollDTO;
-import com.project.enquete.core.enquete_platform.controller.dto.request.VoteDTO;
-import com.project.enquete.core.enquete_platform.controller.dto.response.OptionResponseDTO;
-import com.project.enquete.core.enquete_platform.controller.dto.response.PollResponseDTO;
-import com.project.enquete.core.enquete_platform.controller.dto.validator.VoteValidator;
+import com.project.enquete.core.enquete_platform.dto.request.PollDTO;
+import com.project.enquete.core.enquete_platform.dto.request.VoteDTO;
+import com.project.enquete.core.enquete_platform.dto.response.OptionResponseDTO;
+import com.project.enquete.core.enquete_platform.dto.response.PollResponseDTO;
+import com.project.enquete.core.enquete_platform.dto.validator.VoteValidator;
 import com.project.enquete.core.enquete_platform.controller.mappers.PollMapper;
 import com.project.enquete.core.enquete_platform.model.Option;
 import com.project.enquete.core.enquete_platform.model.Poll;
@@ -13,7 +13,7 @@ import com.project.enquete.core.enquete_platform.model.Vote;
 import com.project.enquete.core.enquete_platform.repository.OptionRepository;
 import com.project.enquete.core.enquete_platform.repository.PollRepository;
 import com.project.enquete.core.enquete_platform.repository.VoteRepository;
-import com.project.enquete.core.enquete_platform.security.SecurityService;
+import com.project.enquete.core.enquete_platform.security.services.SecurityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

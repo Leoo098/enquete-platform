@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="pt-br" xmlns:th="htto://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<header>
+    <div class="container" th:fragment="header">
+        <nav>
+            <div class="logo">
+                <i class="fas fa-poll"></i>
+                <span>VoteAqui</span>
+            </div>
+            <ul class="nav-links" th:if="${authentication != null}">
+                <li><a th:href="@{/}">Início</a></li>
+                <li><a th:href="@{/enquetes}">Enquetes</a></li>
+                <li><a href="#">Criar</a></li>
+                <li>
+                    <form th:action="@{/logout}" method="POST" style="display: inline;">
+                        <button type="submit" class="btn btn-danger">Sair</button>
+                    </form>
+                </li>
+            </ul>
+
+            <ul class="nav-links" th:if="${authentication == null}">
+                <li><a th:href="@{/}">Início</a></li>
+                <li>
+                    <a th:href="@{http://localhost:8080/oauth2/authorize?response_type=code&client_id=enquete-client&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fauthorized
+}" class="btn btn-primary">Entrar</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</header>
+<body>
+</body>
+</html>

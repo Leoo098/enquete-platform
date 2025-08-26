@@ -34,3 +34,11 @@ create table votes(
     constraint fk_user foreign key (user_id) references "users"(id),
     constraint fk_option foreign key (option_id) references "options"(id)
 );
+
+create table client(
+  id uuid not null primary key,
+  client_id varchar(150) not null,
+  client_secret varchar(400) not null,
+  redirect_uri varchar(200) not null,
+  scope varchar(50)
+);

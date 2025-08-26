@@ -1,6 +1,6 @@
 package com.project.enquete.core.enquete_platform.exceptions;
 
-import com.project.enquete.core.enquete_platform.controller.dto.response.ValidationError;
+import com.project.enquete.core.enquete_platform.dto.response.ValidationError;
 import lombok.Getter;
 
 import java.util.List;

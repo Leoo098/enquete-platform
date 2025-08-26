@@ -1,7 +1,7 @@
 package com.project.enquete.core.enquete_platform.controller.mappers;
 
-import com.project.enquete.core.enquete_platform.controller.dto.request.PollDTO;
-import com.project.enquete.core.enquete_platform.controller.dto.response.PollResponseDTO;
+import com.project.enquete.core.enquete_platform.dto.request.PollDTO;
+import com.project.enquete.core.enquete_platform.dto.response.PollResponseDTO;
 import com.project.enquete.core.enquete_platform.model.Poll;
 import com.project.enquete.core.enquete_platform.model.TimeUnit;
 import com.project.enquete.core.enquete_platform.model.Vote;
