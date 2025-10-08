@@ -11,6 +11,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
@@ -38,24 +39,22 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/error", "/index","/home", "/static/**", "/css/**", "/enquetes").permitAll()
-                        .requestMatchers("/login/**").permitAll()
+                        .requestMatchers("/login/**", "/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/clients").hasRole("ADMIN")
 
                         .anyRequest().authenticated()
                 )
-//                .sessionManagement(session -> session
-//                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                )
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/login")
                         .successHandler(successHandler))
 
-                .oauth2ResourceServer(oauth2Rs ->
-                        oauth2Rs.jwt(Customizer.withDefaults()))
+//                .oauth2ResourceServer(oauth2Rs ->
+//                        oauth2Rs.jwt(Customizer.withDefaults()))
+                .oauth2ResourceServer(AbstractHttpConfigurer::disable)
 
                 .addFilterBefore(tokenRefreshFilter, BearerTokenAuthenticationFilter.class)
-                .addFilterAfter(jwtCustomAuthenticationFilter, BearerTokenAuthenticationFilter.class)
+                .addFilterBefore(jwtCustomAuthenticationFilter, BearerTokenAuthenticationFilter.class)
 
                 .logout(logout -> logout
                         .logoutUrl("/logout")

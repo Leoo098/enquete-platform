@@ -17,21 +17,24 @@ public class LogoutService {
     private final TokenBlacklistService tokenBlacklistService;
     private final JwtTokenService jwtTokenService;
 
-    public void forceLogout(HttpServletRequest request, HttpServletResponse response){
-        // Adiciona tokens à blacklist (se existirem)
+    public void defaultLogout(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        tokensHandle(request, response);
+        response.sendRedirect("/");
+    }
+
+    public void forceLogout(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        tokensHandle(request, response);
+        response.sendRedirect("http://localhost:8080/oauth2/authorize?response_type=code&client_id=enquete-client&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fauthorized");
+    }
+
+    private void tokensHandle(HttpServletRequest request, HttpServletResponse response) {
         String accessToken = jwtTokenService.extractAccessToken(request);
         String refreshToken = jwtTokenService.extractRefreshToken(request);
 
         if (accessToken != null) tokenBlacklistService.addToBlacklist(accessToken);
         if (refreshToken != null) tokenBlacklistService.addToBlacklist(refreshToken);
 
-        // Limpa os cookies
         clearCookies(response);
-
-        // Redireciona para o login (opcional)
-        if (jwtTokenService.isTokenExpired(refreshToken)) {
-            redirectToLogin(response);
-        }
     }
 
     public void clearCookies(HttpServletResponse response) {
@@ -61,12 +64,4 @@ public class LogoutService {
         response.addHeader(HttpHeaders.SET_COOKIE, clearSessionCookie.toString());
     }
 
-    private void redirectToLogin(HttpServletResponse response){
-        try {
-            response.sendRedirect("/login?expired=true");
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

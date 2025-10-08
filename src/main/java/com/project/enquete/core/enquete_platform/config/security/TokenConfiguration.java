@@ -22,7 +22,8 @@ public class TokenConfiguration {
         return TokenSettings.builder()
                 .accessTokenFormat(OAuth2TokenFormat.SELF_CONTAINED)
                 .accessTokenTimeToLive(Duration.ofMinutes(60))
-                .refreshTokenTimeToLive(Duration.ofMinutes(90))
+                .refreshTokenTimeToLive(Duration.ofDays(7))
+                .reuseRefreshTokens(false)
                 .build();
     }
 

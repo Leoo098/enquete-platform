@@ -33,4 +33,5 @@ public class Poll {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User createdBy;
+
 }

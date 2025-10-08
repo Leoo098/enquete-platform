@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Criar Enquete</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+</head>
+<body>
+  <div th:insert="~{fragments/commons :: header}"></div>
+
+  <div class="container" id="poll-create">
+      <div class="card">
+          <div class="card-header">
+            <h2>Criar Enquete</h2>
+          </div>
+
+          <div class="card-content">
+              <form th:object="${poll}" th:action="@{/poll/create}" method="post">
+
+                  <div class="form-group">
+                      <label class="form-label">Título</label>
+                      <input type="text" class="form-control"
+                             th:classappend="${#fields.hasErrors('question')} ? 'is-invalid' : ''"
+                             th:field="*{question}">
+                      <div class="invalid-feedback" th:errors="*{question}"></div>
+                  </div>
+
+                  <div class="row">
+                      <div class="col-md-6">
+                          <label class="form-label">Duração</label>
+                          <input type="number" class="form-control"
+                                 th:classappend="${#fields.hasErrors('duration')} ? 'is-invalid' : ''"
+                                 th:field="*{duration}">
+                          <div class="invalid-feedback" th:errors="*{duration}"></div>
+                      </div>
+                      <div class="col-md-6">
+                          <label class="form-label">Unidade</label>
+                          <select class="form-select"
+                                  th:classappend="${#fields.hasErrors('timeUnit')} ? 'is-invalid' : ''"
+                                  th:field="*{timeUnit}">
+                              <option value="">Selecione...</option>
+                              <option th:each="unit : ${timeUnits}"
+                                      th:value="${unit.key}"
+                                      th:text="${unit.value}"></option>
+                          </select>
+                          <div class="invalid-feedback" th:errors="*{timeUnit}"></div>
+                      </div>
+                  </div>
+
+                  <div class="mb-3">
+                      <label class="form-label">Opções</label>
+                      <div id="options-container">
+                          <div th:each="opt, status : *{options}" class="option-group mb-2">
+                              <div class="input-group">
+                                  <input type="text" class="form-control"
+                                         th:classappend="${#fields.hasErrors('options[' + status.index + '].text')} ? 'is-invalid' : ''"
+                                         th:field="*{options[__${status.index}__].text}"
+                                         th:placeholder="'Opção ' + (${status.index} + 1)">
+                                  <button th:if="${status.index > 1}" type="button" class="btn btn-danger"
+                                          onclick="removeOption(this)">X</button>
+                              </div>
+                              <div class="invalid-feedback" th:errors="*{options[__${status.index}__].text}"></div>
+                          </div>
+                      </div>
+
+                      <button type="button" class="btn btn-secondary mt-2" onclick="addOption()">
+                          + Adicionar Opção
+                      </button>
+                  </div>
+
+                  <button type="submit" class="btn btn-primary">Criar</button>
+              </form>
+          </div>
+      </div>
+  </div>
+
+  <script>
+      function addOption() {
+            const container = document.getElementById('options-container');
+            const currentOptions = container.querySelectorAll('.option-group').length;
+
+            if (currentOptions >= 6) {
+                alert('Máximo de 6 opções permitidas!');
+                return;
+            }
+
+            const index = currentOptions;
+
+            const newOption = `
+                <div class="option-group mb-2">
+                    <div class="input-group">
+                        <input type="text" class="form-control"
+                               name="options[${index}].text"
+                               placeholder="Opção ${index + 1}">
+                        <button type="button" class="btn btn-danger" onclick="removeOption(this)">X</button>
+                    </div>
+                </div>
+            `;
+
+            container.insertAdjacentHTML('beforeend', newOption);
+        }
+
+      function removeOption(button) {
+            const container = document.getElementById('options-container');
+            const optionGroups = container.querySelectorAll('.option-group');
+
+            if (optionGroups.length > 2) {
+                button.closest('.option-group').remove();
+
+                // Reindexa os inputs restantes
+                container.querySelectorAll('.option-group').forEach((group, index) => {
+                    const input = group.querySelector('input');
+                    input.name = `options[${index}].text`;
+                    input.placeholder = `Opção ${index + 1}`;
+                });
+            }
+        }
+  </script>
+</body>
+</html>

@@ -3,10 +3,13 @@ package com.project.enquete.core.enquete_platform.controller.web;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.enquete.core.enquete_platform.model.Poll;
-import com.project.enquete.core.enquete_platform.repository.PollRepository;
+import com.project.enquete.core.enquete_platform.dto.request.UserDTO;
+import com.project.enquete.core.enquete_platform.dto.response.OAuthTokenResponse;
+import com.project.enquete.core.enquete_platform.form.UserForm;
 import com.project.enquete.core.enquete_platform.security.jwt.JwtTokenService;
+import com.project.enquete.core.enquete_platform.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -15,34 +18,51 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
 public class LoginViewController {
 
+    private final UserService userService;
+
     private final JwtTokenService jwtTokenService;
-    private final PollRepository pollRepository;
 
     @GetMapping("/login")
     public String loginPage(){
         return "login";
     }
 
-    @GetMapping("/enquetes")
-    public String enquetesPage(Model model, Authentication authentication){
-        String username = authentication.getName();
+    @GetMapping("/register")
+    public String registerPage(Model model){
+        model.addAttribute("user", new UserForm());
+        return "register";
+    }
 
-        List<Poll> polls = pollRepository.findPollsByUsername(username);
+    @PostMapping("/register")
+    public String registerUser(@ModelAttribute @Valid UserForm userForm,
+                               BindingResult result){
+        if (result.hasErrors()){
+            return "register";
+        }
 
-        model.addAttribute("authentication", authentication);
-        model.addAttribute("polls", polls);
-        return "enquetes";
+        UserDTO dto = convertToDto(userForm);
+
+        userService.save(dto);
+        return "redirect:/";
+    }
+
+    private static UserDTO convertToDto(UserForm userForm) {
+        return new UserDTO(
+                userForm.getUsername(),
+                userForm.getEmail(),
+                userForm.getPassword()
+        );
     }
 
     @GetMapping("/")
@@ -56,15 +76,13 @@ public class LoginViewController {
     }
 
     @GetMapping("/authorized")
-    public ResponseEntity<String> getAuthorizationCode(@RequestParam("code") String code,
+    public String getAuthorizationCode(@RequestParam("code") String code,
                                                        HttpServletResponse response) throws JsonProcessingException {
 
-        ResponseEntity<String> tokenResponse = jwtTokenService.exchangeCodeForToken(code);
+        OAuthTokenResponse tokenResponse = jwtTokenService.exchangeCodeForToken(code);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = objectMapper.readTree(tokenResponse.getBody());
-        String accessToken = jsonNode.get("access_token").asText();
-        String refreshToken = jsonNode.get("refresh_token").asText();
+        String accessToken = tokenResponse.getAccessToken();
+        String refreshToken = tokenResponse.getRefreshToken();
 
         ResponseCookie accessTokenCookie = jwtTokenService.createAccessTokenCookie(accessToken);
 
@@ -76,9 +94,10 @@ public class LoginViewController {
 //        return ResponseEntity.ok("Autenticado com sucesso!");
 
         // 4. Redireciona para check-cookies
-        return ResponseEntity.status(HttpStatus.FOUND)
-                .location(URI.create("/"))
-                .build();
+//        return ResponseEntity.status(HttpStatus.FOUND)
+//                .location(URI.create("/"))
+//                .build();
+        return "redirect:/";
     }
 
     @GetMapping("/check-cookies")
@@ -91,10 +110,8 @@ public class LoginViewController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(HttpServletResponse response) {
-        return ResponseEntity.status(HttpStatus.FOUND)
-                .location(URI.create("/"))
-                .build();
+    public String logout(HttpServletResponse response) {
+        return "redirect:/";
     }
 
 }

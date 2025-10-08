@@ -26,8 +26,11 @@ public interface PollMapper {
     Poll toEntity(PollDTO pollDTO);
 
     @Mapping(target = "id", source = "poll.id")
+    @Mapping(target = "question", source = "poll.question")
+    @Mapping(target = "createdAt", source = "poll.createdAt")
+    @Mapping(target = "expiresAt", source = "poll.expiresAt")
     @Mapping(target = "options", source = "options")
-    @Mapping(target = "timeLeft", expression = "java(calculateTimeLeft(poll.getExpiresAt()))")
+    @Mapping(target = "createdBy", source = "poll.createdBy.username")
     PollResponseDTO toResponseDTO(Poll poll, @Context PollDTO requestDTO);
 
     @Named("calculateExpiration")
@@ -51,7 +54,6 @@ public interface PollMapper {
             case MINUTES -> ChronoUnit.MINUTES;
             case HOURS -> ChronoUnit.HOURS;
             case DAYS -> ChronoUnit.DAYS;
-            case STOP -> ChronoUnit.valueOf(Instant.now().toString());
         };
     }
 }

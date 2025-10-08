@@ -13,8 +13,8 @@
             </div>
             <ul class="nav-links" th:if="${authentication != null}">
                 <li><a th:href="@{/}">Início</a></li>
-                <li><a th:href="@{/enquetes}">Enquetes</a></li>
-                <li><a href="#">Criar</a></li>
+                <li><a th:href="@{/polls}">Enquetes</a></li>
+                <li><a th:href="@{/poll/create}">Criar</a></li>
                 <li>
                     <form th:action="@{/logout}" method="POST" style="display: inline;">
                         <button type="submit" class="btn btn-danger">Sair</button>

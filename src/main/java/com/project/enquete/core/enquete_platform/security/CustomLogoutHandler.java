@@ -8,6 +8,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+
 @Component
 @RequiredArgsConstructor
 public class CustomLogoutHandler implements LogoutHandler {
@@ -19,6 +21,11 @@ public class CustomLogoutHandler implements LogoutHandler {
                        HttpServletResponse response,
                        Authentication authentication) {
 
-        logoutService.forceLogout(request, response);
+        try {
+            logoutService.defaultLogout(request, response);
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

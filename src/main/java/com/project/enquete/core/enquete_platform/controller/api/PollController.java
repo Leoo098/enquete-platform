@@ -35,17 +35,17 @@ public class PollController implements GenericController{
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("{id}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<Void> addVote(@RequestBody VoteDTO dto){
-        pollService.addVote(dto);
-        return ResponseEntity.ok().build();
-    }
+//    @PostMapping("{id}")
+//    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+//    public ResponseEntity<Void> addVote(@RequestBody VoteDTO dto){
+//        pollService.addVote(dto);
+//        return ResponseEntity.ok().build();
+//    }
 
-    @GetMapping("{id}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<PollResponseDTO> getPoll(@PathVariable UUID id){
-        var poll = pollService.getPoll(id);
-        return ResponseEntity.ok().body(poll);
-    }
+//    @GetMapping("{id}")
+//    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+//    public ResponseEntity<PollResponseDTO> getPoll(@PathVariable UUID id){
+//        var poll = pollService.getPoll(id);
+//        return ResponseEntity.ok().body(poll);
+//    }
 }

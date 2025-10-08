@@ -27,6 +27,11 @@ public class JwtCustomAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain chain) throws ServletException, IOException {
 
+        if (request.getRequestURI().startsWith("/.well-known/")) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (shouldConvert(authentication)){

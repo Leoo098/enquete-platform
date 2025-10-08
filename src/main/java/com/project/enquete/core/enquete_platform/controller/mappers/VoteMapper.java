@@ -9,5 +9,5 @@ public interface VoteMapper {
 
     Vote toEntity(VoteDTO dto);
 
-    VoteDTO toDTO(Vote vote);
+    VoteDTO toDTO(Long vote);
 }

@@ -41,19 +41,10 @@ public class AuthorizationServerConfiguration {
 
         OAuth2AuthorizationServerConfigurer authorizationServerConfigurer =
                 new OAuth2AuthorizationServerConfigurer();
-//                OAuth2AuthorizationServerConfigurer.authorizationServer();
 
         RequestMatcher endpointsMatcher = authorizationServerConfigurer.getEndpointsMatcher();
 
         http
-//            .securityMatcher(authorizationServerConfigurer.getEndpointsMatcher())
-//                .with(authorizationServerConfigurer, (authorizationServer) ->
-//                        authorizationServer.oidc(Customizer.withDefaults())	// Enable OpenID Connect 1.0
-//                )
-//                .authorizeHttpRequests((authorize) ->
-//                        authorize.anyRequest().authenticated()
-//                )
-
                 .securityMatcher(endpointsMatcher)
                 .authorizeHttpRequests(auth -> auth
                         .anyRequest().authenticated())
