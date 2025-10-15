@@ -21,10 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -55,42 +52,34 @@ public class PollService {
     public PollResponseDTO getPoll(UUID id){
         Poll poll = pollRepository.findById(id).orElse(null);
 
-        List<OptionResponseDTO> optionDTOs = poll.getOptions().stream()
-                .map(option -> {
-                    int votes = option.getVotes().size();
-                    return new OptionResponseDTO(
-                            option.getId(),
-                            option.getText(),
-                            votes,
-                            0.0
-                    );
-                })
-                .toList();
+        int totalVotes = voteRepository.countVotesByPollId(poll.getId());
+        List<OptionResponseDTO> optionsWithPercentage = new ArrayList<>();
+        List<Long> winnerOptionIds = new ArrayList<>();
+        int maxVotes = -1;
 
-        int totalVotes = optionDTOs.stream().mapToInt(OptionResponseDTO::votes).sum();
+        for (var option : poll.getOptions()) {
+            int votes = option.getVotes().size();
 
-        List<OptionResponseDTO> optionsWithPercentage = optionDTOs.stream()
-                .map(option -> new OptionResponseDTO(
-                        option.id(),
-                        option.text(),
-                        option.votes(),
-                        totalVotes > 0 ? (option.votes() * 100.0) / totalVotes : 0.0
-                ))
-                .toList();
+            double percentage = totalVotes > 0 ? (votes * 100.0) / totalVotes : 0.0;
+            OptionResponseDTO optionDTO = new OptionResponseDTO(
+                    option.getId(), option.getText(), votes, percentage
+            );
+            optionsWithPercentage.add(optionDTO);
 
-        return new PollResponseDTO(
-                poll.getId(),
-                poll.getQuestion(),
-                poll.getCreatedAt(),
-                poll.getExpiresAt(),
-                Duration.between(Instant.now(), poll.getExpiresAt()),
-                optionsWithPercentage,
-                totalVotes,
-                poll.getCreatedBy().getUsername(),
-                poll.getCreatedBy().getId(),
-                null,
-                false
-        );
+            if (votes > maxVotes) {
+                maxVotes = votes;
+                winnerOptionIds.clear();
+                winnerOptionIds.add(option.getId());
+            } else if (votes == maxVotes && votes > 0) {
+                winnerOptionIds.add(option.getId());
+            }
+        }
+
+        if (maxVotes <= 0) {
+            winnerOptionIds.clear();
+        }
+
+        return getPollResponseDTO(poll, optionsWithPercentage, totalVotes, winnerOptionIds);
     }
 
     public List<PollResponseDTO> getAllPolls() {
@@ -103,44 +92,93 @@ public class PollService {
 
         return polls.stream()
                 .map(poll -> {
-                    List<OptionResponseDTO> options = poll.getOptions().stream()
-                        .map(option -> {
-                            int votes = voteRepository.countVotesByOptionId(option.getId());
-                            return new OptionResponseDTO(
-                                    option.getId(),
-                                    option.getText(),
-                                    votes,
-                                    0.0
-                            );
-                        })
-                        .toList();
-
                     int totalVotes = voteRepository.countVotesByPollId(poll.getId());
+                    List<OptionResponseDTO> optionsWithPercentage = new ArrayList<>();
+                    List<Long> winnerOptionIds = new ArrayList<>();
+                    int maxVotes = -1;
 
-                    List<OptionResponseDTO> optionsWithPercentage = options.stream()
-                            .map(option -> new OptionResponseDTO(
-                                    option.id(),
-                                    option.text(),
-                                    option.votes(),
-                                    totalVotes > 0 ? (option.votes() * 100.0) / totalVotes : 0.0
-                            ))
-                            .toList();
+                    for (var option : poll.getOptions()){
+                        int votes = voteRepository.countVotesByOptionId(option.getId());
 
-                    return new PollResponseDTO(
-                            poll.getId(),
-                            poll.getQuestion(),
-                            poll.getCreatedAt(),
-                            poll.getExpiresAt(),
-                            Duration.between(Instant.now(), poll.getExpiresAt()),
-                            optionsWithPercentage,
-                            totalVotes,
-                            poll.getCreatedBy().getUsername(),
-                            poll.getCreatedBy().getId(),
-                            null,
-                            false
-                    );
+                        double percentage = totalVotes > 0 ? (votes * 100.0) / totalVotes : 0.0;
+
+                        OptionResponseDTO optionDTO = new OptionResponseDTO(
+                                option.getId(), option.getText(), votes, percentage
+                        );
+                        optionsWithPercentage.add(optionDTO);
+
+                        if (votes > maxVotes){
+                            maxVotes = votes;
+                            winnerOptionIds.clear();
+                            winnerOptionIds.add(option.getId());
+                        }
+                        else if (votes == maxVotes && votes > 0) {
+                            winnerOptionIds.add(option.getId());
+                        }
+                    }
+
+                    if (maxVotes <= 0){
+                        winnerOptionIds.clear();
+                    }
+
+                    return getPollResponseDTO(poll, optionsWithPercentage, totalVotes, winnerOptionIds);
                 })
                 .toList();
+    }
+
+    public List<PollResponseDTO> getRandomPublicPolls(){
+        List<Poll> RandomPublicPolls = pollRepository.findRandomPublicPolls();
+
+        return RandomPublicPolls.stream()
+                .map(poll -> {
+                    int totalVotes = voteRepository.countVotesByPollId(poll.getId());
+                    List<OptionResponseDTO> optionsWithPercentage = new ArrayList<>();
+
+                    for (var option : poll.getOptions()){
+                        int votes = voteRepository.countVotesByOptionId(option.getId());
+
+                        double percentage = totalVotes > 0 ? (votes * 100.0) / totalVotes : 0.0;
+
+                        OptionResponseDTO optionDTO = new OptionResponseDTO(
+                                option.getId(), option.getText(), votes, percentage
+                        );
+                        optionsWithPercentage.add(optionDTO);
+                    }
+
+                    return getPollResponseDTO(poll, optionsWithPercentage, totalVotes, null);
+                })
+                .toList();
+    }
+
+    private PollResponseDTO getPollResponseDTO(Poll poll, List<OptionResponseDTO> optionsWithPercentage, int totalVotes, List<Long> winnerOptionIds) {
+        return new PollResponseDTO(
+                poll.getId(),
+                poll.getQuestion(),
+                poll.getCreatedAt(),
+                poll.getExpiresAt(),
+                calculateTimeLeft(Instant.now(), poll.getExpiresAt()),
+                optionsWithPercentage,
+                totalVotes,
+                poll.getCreatedBy().getUsername(),
+                poll.getVisibility(),
+                poll.getCreatedBy().getId(),
+                null,
+                false,
+                Instant.now().isAfter(poll.getExpiresAt()),
+                winnerOptionIds
+        );
+    }
+
+    private String calculateTimeLeft(Instant now, Instant expiresAt) {
+        if (now.isAfter(expiresAt)) {
+            return "Finalizada";
+        }
+
+        Duration duration = Duration.between(now, expiresAt);
+        long hours = duration.toHours();
+        long minutes = duration.toMinutes() % 60;
+
+        return "Restam " + hours + "h " + minutes + "m";
     }
 
     public Long getUserVoteOptionId(UUID pollId, UUID userId) {
@@ -162,9 +200,12 @@ public class PollService {
                 originalPoll.options(),
                 originalPoll.totalVotes(),
                 originalPoll.createdBy(),
+                originalPoll.visibility(),
                 originalPoll.userId(),
                 userVoteOptionId,
-                userVoteOptionId != null
+                userVoteOptionId != null,
+                originalPoll.isExpired(),
+                originalPoll.winnerOptionIds()
         );
     }
 

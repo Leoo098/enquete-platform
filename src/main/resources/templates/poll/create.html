@@ -11,8 +11,8 @@
 <body>
   <div th:insert="~{fragments/commons :: header}"></div>
 
-  <div class="container" id="poll-create">
-      <div class="card">
+  <div class="container">
+      <div class="card" id="poll-create">
           <div class="card-header">
             <h2>Criar Enquete</h2>
           </div>
@@ -31,7 +31,7 @@
                   <div class="row">
                       <div class="col-md-6">
                           <label class="form-label">Duração</label>
-                          <input type="number" class="form-control"
+                          <input type="number" maxlength="3" class="form-control"
                                  th:classappend="${#fields.hasErrors('duration')} ? 'is-invalid' : ''"
                                  th:field="*{duration}">
                           <div class="invalid-feedback" th:errors="*{duration}"></div>
@@ -59,19 +59,39 @@
                                          th:classappend="${#fields.hasErrors('options[' + status.index + '].text')} ? 'is-invalid' : ''"
                                          th:field="*{options[__${status.index}__].text}"
                                          th:placeholder="'Opção ' + (${status.index} + 1)">
-                                  <button th:if="${status.index > 1}" type="button" class="btn btn-danger"
-                                          onclick="removeOption(this)">X</button>
+                                  <button th:if="${status.index > 1}" type="button" class="remove-btn btn-danger"
+                                          onclick="removeOption(this)"><i class="fa-solid fa-minus"></i></button>
                               </div>
                               <div class="invalid-feedback" th:errors="*{options[__${status.index}__].text}"></div>
                           </div>
                       </div>
 
-                      <button type="button" class="btn btn-secondary mt-2" onclick="addOption()">
+                      <button type="button" class="btn btn-secondary mt-2" onclick="addOption()" id="add-btn">
                           + Adicionar Opção
                       </button>
                   </div>
 
-                  <button type="submit" class="btn btn-primary">Criar</button>
+                  <div class="mb-3">
+                      <label class="form-label">
+                          Visibilidade da Enquete
+                      </label>
+                      <div class="form-create-check">
+                          <input class="create-check-input" type="radio" th:field="*{visibility}" th:value="public" id="isPublic" checked>
+                          <label class="create-check-label" for="isPublic">
+                              Pública
+                              <small class="form-text text-muted d-block">A enquete poderá aparecer na página inicial do site.</small>
+                          </label>
+                      </div>
+                      <div class="form-create-check">
+                          <input class="create-check-input" type="radio" th:field="*{visibility}" th:value="private" id="notPublic" >
+                          <label class="create-check-label" for="notPublic">
+                              Privada
+                              <small class="form-text text-muted d-block">Somente usuários com um convite podem acessar.</small>
+                          </label>
+                      </div>
+                  </div>
+
+                  <button type="submit" class="btn btn-primary" id="btn-create">Criar</button>
               </form>
           </div>
       </div>
@@ -95,7 +115,7 @@
                         <input type="text" class="form-control"
                                name="options[${index}].text"
                                placeholder="Opção ${index + 1}">
-                        <button type="button" class="btn btn-danger" onclick="removeOption(this)">X</button>
+                        <button type="button" class="remove-btn btn-danger" onclick="removeOption(this)"><i class="fa-solid fa-minus"></i></button>
                     </div>
                 </div>
             `;
@@ -119,5 +139,10 @@
             }
         }
   </script>
+
+  <footer>
+      <div class="container">
+      </div>
+  </footer>
 </body>
 </html>

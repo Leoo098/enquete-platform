@@ -1,8 +1,6 @@
 package com.project.enquete.core.enquete_platform.controller.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.enquete.core.enquete_platform.dto.request.UserDTO;
 import com.project.enquete.core.enquete_platform.dto.response.OAuthTokenResponse;
 import com.project.enquete.core.enquete_platform.form.UserForm;
@@ -12,16 +10,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,7 +25,6 @@ import java.util.Map;
 public class LoginViewController {
 
     private final UserService userService;
-
     private final JwtTokenService jwtTokenService;
 
     @GetMapping("/login")
@@ -65,16 +59,6 @@ public class LoginViewController {
         );
     }
 
-    @GetMapping("/")
-    public String homePage(Model model,Authentication authentication){
-//    public String homePage(@AuthenticationPrincipal OAuth2User principal){
-//        if (authentication instanceof CustomAuthentication auth){
-//            System.out.println(auth);
-//        }
-        model.addAttribute("authentication", authentication);
-        return "index";
-    }
-
     @GetMapping("/authorized")
     public String getAuthorizationCode(@RequestParam("code") String code,
                                                        HttpServletResponse response) throws JsonProcessingException {
@@ -91,12 +75,6 @@ public class LoginViewController {
         response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
         response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
 
-//        return ResponseEntity.ok("Autenticado com sucesso!");
-
-        // 4. Redireciona para check-cookies
-//        return ResponseEntity.status(HttpStatus.FOUND)
-//                .location(URI.create("/"))
-//                .build();
         return "redirect:/";
     }
 

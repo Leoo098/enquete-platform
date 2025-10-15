@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div th:fragment="timer-script">
+    <script th:inline="javascript">
+        function formatTimeLeft(milliseconds) {
+            const seconds = Math.floor(milliseconds / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const hours = Math.floor(minutes / 60);
+            const days = Math.floor(hours / 24);
+
+            if (days > 0) {
+                return 'Restam ' + days + 'd ' + (hours % 24) + 'h';
+            } else if (hours > 0) {
+                return 'Restam ' + hours + 'h ' + (minutes % 60) + 'm';
+            } else if (minutes > 0) {
+                return 'Restam ' + minutes + 'm ' + (seconds % 60) + 's';
+            } else {
+                return 'Restam ' + seconds + 's';
+            }
+        }
+
+        function updateTimers() {
+            const timers = document.querySelectorAll('.poll-timer');
+
+            timers.forEach(timer => {
+                const expiresAt = timer.getAttribute('data-expires-at');
+                const now = Date.now();
+                const timeLeft = expiresAt - now;
+
+                if (timeLeft <= 0) {
+                    timer.textContent = 'Finalizada';
+                    timer.className = 'badge bg-timer-closed bg-warning';
+                } else {
+                    timer.textContent = formatTimeLeft(timeLeft);
+                }
+            });
+        }
+
+        setInterval(updateTimers, 1000);
+
+        updateTimers();
+    </script>
+</div>

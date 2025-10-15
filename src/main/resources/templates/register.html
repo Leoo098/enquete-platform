@@ -9,24 +9,10 @@
 
     <style>
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg,rgba(2, 0, 36, 1) 0%, rgba(47, 97, 224, 1) 48%, rgba(37, 176, 204, 1) 80%);
             height: 100vh;
             display: flex;
             align-items: center;
-        }
-        .login-card {
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
-        }
-        .login-header {
-            background: rgba(255, 255, 255, 0.9);
-            padding: 30px;
-            text-align: center;
-        }
-        .login-body {
-            background: white;
-            padding: 30px;
         }
         .form-control {
             height: 50px;
@@ -40,26 +26,19 @@
             border: none;
         }
         .btn-login {
-            background: linear-gradient(to right, #667eea, #764ba2);
+            background: linear-gradient(to right,rgba(2, 0, 36, 1) 0%, rgba(37, 176, 204, 1) 80%);
             border: none;
             height: 50px;
             border-radius: 8px;
             font-weight: 600;
         }
-        .social-login .btn {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 5px;
-        }
     </style>
 </head>
 <body>
-<div class="container" id="poll-create">
-    <h2>Crie sua conta</h2>
+<div class="container" id="register-user">
+    <div class="title">
+        <h2>Crie sua conta</h2>
+    </div>
 
     <form th:object="${user}" th:action="@{/register}" method="post">
 

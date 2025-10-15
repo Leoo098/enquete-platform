@@ -13,5 +13,6 @@ public record PollDTO(
         long duration,
         @NotNull(message = "Campo obrigatório")
         TimeUnit timeUnit,
-        List<OptionDTO> options
+        List<OptionDTO> options,
+        String visibility
 ){}

@@ -12,6 +12,7 @@ create table polls(
     created_at timestamp not null,
     expires_at timestamp not null,
     user_id uuid not null,
+    is_public boolean,
 
     constraint fk_user foreign key (user_id) references "users"(id)
 );

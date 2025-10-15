@@ -34,4 +34,7 @@ public class Poll {
     @JoinColumn(name = "user_id")
     private User createdBy;
 
+    @Column
+    private String visibility;
+
 }

@@ -104,7 +104,8 @@ public class PollViewController {
                 form.getQuestion(),
                 form.getDuration(),
                 TimeUnit.valueOf(form.getTimeUnit()),
-                optionDTOs
+                optionDTOs,
+                form.getVisibility()
         );
     }
 

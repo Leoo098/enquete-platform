@@ -30,4 +30,13 @@ public interface PollRepository extends JpaRepository<Poll, UUID> {
         WHERE u.username = :username
         """)
     List<Poll> findPollsByUsername(@Param("username") String username);
+
+    @Query(value = """
+            SELECT * FROM Polls
+            WHERE expires_at > NOW()
+            AND visibility = 'public'
+            ORDER BY RANDOM()
+            LIMIT 4
+            """, nativeQuery = true)
+    List<Poll> findRandomPublicPolls();
 }

@@ -1,5 +1,5 @@
 :root {
-            --primary-color: #4a6bff;
+            --primary-color: #090979;
             --secondary-color: #ff6b6b;
             --dark-color: #2c3e50;
             --light-color: #f8f9fa;
@@ -17,10 +17,12 @@
             background-color: #f5f7ff;
             color: var(--dark-color);
             line-height: 1.6;
+            background: #dedcdc;
         }
 
         header {
-            background: linear-gradient(135deg, var(--primary-color), #6a5acd);
+           /* background: linear-gradient(135deg, var(--primary-color), #6a5acd); */
+            background: linear-gradient(90deg,rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 35%, rgba(0, 212, 255, 1) 100%);
             color: white;
             padding: 1rem 0;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -78,15 +80,6 @@
             opacity: 0.8;
         }
 
-         #poll-create {
-            background-color: white;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 500px;
-            padding: 30px;
-        }
-
         .btn {
             background: white;
             color: var(--primary-color);
@@ -120,9 +113,38 @@
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
         }
 
+        .remove-btn{
+            background: #bd1111;
+            padding: 0.6rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            height: 50px;
+            transition: filter 0.3s ease;
+            color: white;
+        }
+
+        .remove-btn:hover {
+            filter: brightness(0.8);
+        }
+
         .btn-primary {
             background: var(--primary-color);
             color: white;
+        }
+
+        #add-btn{
+            border: 2px solid var(--primary-color);
+            font-weight: 700;
+            width: 40%;
+            display: block;
+            margin: 0 auto;
+        }
+
+        #btn-create{
+            display: block;
+            margin: 0 auto;
+            width: 20%;
         }
 
         .copy-btn{
@@ -167,7 +189,7 @@
 
         .features {
             padding: 5rem 0;
-            background-color: white;
+            background: #dedcdc;
         }
 
         .section-title {
@@ -217,9 +239,64 @@
         }
 
         .trending-polls {
-            padding: 5rem 0;
+            padding: 4rem 0;
             background-color: #f5f7ff;
         }
+
+        .horizontal-scroll-wrapper {
+                    position: relative;
+                    width: 100%;
+                }
+
+                .horizontal-scroll-container {
+                    width: 100%;
+                    padding-block: 20px;
+                    overflow-x: auto;
+                    scroll-behavior: smooth;
+                    scroll-snap-type: x mandatory;
+                    -ms-overflow-style: none;
+                }
+
+                .horizontal-scroll {
+                    display: flex;
+                    gap: 60px;
+                    padding: 10px;
+                }
+
+                .scroll-btn {
+                    position: absolute;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    background: rgba(0,0,0,0.7);
+                    color: white;
+                    border: none;
+                    border-radius: 50%;
+                    width: 40px;
+                    height: 40px;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 18px;
+                    transition: all 0.3s ease;
+                    z-index: 10;
+                    text-decoration: none;
+                }
+
+                .scroll-btn:hover {
+                    background: rgba(0,0,0,0.9);
+                    transform: translateY(-50%) scale(1.1);
+                    color: white;
+                    text-decoration: none;
+                }
+
+                .scroll-btn-left {
+                    left: -50px;
+                }
+
+                .scroll-btn-right {
+                    right: -50px;
+                }
 
         .card-grid {
             display: grid;
@@ -227,6 +304,7 @@
             grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
             gap: 4rem;
             margin-bottom: 40px;
+            grid-auto-rows: minmax(500px, 540px);
         }
 
         .form-card {
@@ -236,22 +314,64 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
+        #poll-create {
+            background-color: #e3e1e1;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 700px;
+            display: flex;
+            font-weight: 500;
+            color: #2c3e50;
+            margin: 0 auto;
+            margin-bottom: 10rem;
+            .card-header{
+                color: white;
+            }
+        }
+
+        #register-user{
+            background-color: #e3e1e1;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            width: 50%;
+            max-width: 600px;
+            padding-inline: 70px;
+            font-weight: 500;
+            .title{
+                padding-block: 30px;
+            }
+            .btn-login{
+                margin-block: 20px;
+                padding-inline: 100px;
+            }
+        }
+
         .form-control {
             height: 50px;
             border-radius: 8px;
+            margin-bottom: 1.1rem;
+            border-width: 3px;
+            border-color: #abb5ba;
         }
 
         .form-select{
             height: 50px;
             border-radius: 8px;
+            border-width: 3px;
+            border-color: #abb5ba;
         }
 
         .card {
-            background: white;
+            background-color: #e3e1e1;
             border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
             transition: transform 0.3s ease;
+            max-width: 750px;
+            min-width: 540px;
+            margin: 0 auto;
+            scrollbar-color: gray #e3e1e1;
         }
 
         .polls-page .card:hover {
@@ -272,10 +392,11 @@
         }
 
         .card-content {
-            padding: 1.5rem;
+            padding: 1rem;
             flex-grow: 1;
             display: flex;
             flex-direction: column;
+            padding-inline: 3rem;
         }
 
         .card-content h3 {
@@ -283,10 +404,10 @@
         }
 
         .card-footer {
-            border-top: 1px solid #e0dfda;
+            border-top: 2px solid #abb5ba;
             justify-content: space-between;
             color: #666;
-            background-color: white;
+            background-color: #e3e1e1;
             font-size: 0.9rem;
             margin-bottom: 1rem;
         }
@@ -308,8 +429,21 @@
         }
 
         .option {
-            margin-bottom: 15px;
+            margin-bottom: 30px;
             padding: 5px;
+        }
+
+        .winner-option{
+            border-color: #0d6efd;
+            background-color: #8588ed;
+            color: white;
+            border-radius: 8px;
+            .progress-bar {
+                background-color: #0a0599 !important;
+            }
+            .votes{
+                color: white;
+            }
         }
 
         .radio-option {
@@ -358,7 +492,7 @@
             border: 2px solid transparent;
             border-radius: 8px;
             margin-bottom: 15px;
-            border-color: #c6d9f5;
+            border-color: #abb5ba;
             overflow: hidden;
         }
 
@@ -369,12 +503,6 @@
         .form-check-input {
           display: none;
         }
-
-      /*
-        .option-details:hover{
-            background-color: #edf2f7;
-            transform: translateY(-2px);
-        } */
 
         .badge{
            margin-bottom: 10px;
@@ -390,15 +518,25 @@
             animation-direction: reverse;
         }
 
+        .custom-color-bar{
+           background-color: #420dde;
+        }
+
         .progress-bar {
             border-radius: 12px;
             position: relative;
         }
 
+        .bar-text{
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
         .progress {
             height: 25px;
             border-radius: 12px;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
         }
 
         .form-check-input {
@@ -413,19 +551,44 @@
             color: #2c3e50;
         }
 
-        .bar-text{
-            font-weight: 600;
-            font-size: 0.85rem;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        .create-check-input{
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            margin-left: 10px;
+            transform: translate(0, -60%);
+            accent-color: var(--primary-color);;
+
+        }
+        .create-check-label{
+            padding: 10px;
+
+        }
+
+        .create-check-label{
+            margin-left: 8px;
+            margin-top: 15px;
+            font-weight: 500;
+            color: #2c3e50;
         }
 
         .poll-stats {
             display: flex;
             align-items: center;
+            justify-content: space-between;
             color: var(--primary-color);
             font-weight: 600;
             margin: 1rem 0;
             padding-inline: 1rem;
+            .bg-timer{
+                padding: 0.7rem;
+                font-size: 15px;
+            }
+            .bg-timer-closed{
+                padding: 0.7rem;
+                font-size: 15px;
+                color: black;
+            }
         }
 
         .poll-stats i {
@@ -436,11 +599,17 @@
             color: #7f8c8d;
         }
 
+        .alert{
+            background-color: #1dc0e0;
+            font-weight: 500;
+        }
+
         footer {
             background: var(--dark-color);
             color: white;
             padding: 3rem 0 1.5rem;
             text-align: center;
+            margin-top: 5rem;
         }
 
         .footer-links {

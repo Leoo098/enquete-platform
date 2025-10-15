@@ -27,9 +27,12 @@ public class PollForm {
     @Size(min = 2)
     private List<OptionForm> options;
 
+    private String visibility;
+
     public PollForm(){
         this.options = new ArrayList<>();
         this.options.add(new OptionForm());
         this.options.add(new OptionForm());
+        this.visibility = "public";
     }
 }
