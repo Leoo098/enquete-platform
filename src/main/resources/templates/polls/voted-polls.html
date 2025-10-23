@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Enquetes votadas</title>
+    <div th:insert="~{fragments/commons :: head}"></div>
+
+</head>
+<body class="polls-page">
+<div th:insert="~{fragments/commons :: header}"></div>
+
+<div class="section-container">
+    <h2>Enquetes votadas</h2>
+</div>
+
+<div th:if="${polls.empty}" class="alert alert-info" id="poll-alert">
+    Você ainda votou em nenhuma enquete.
+</div>
+
+<div class="container">
+    <div th:unless="${polls.empty}" class="card-grid">
+        <div th:each="poll : ${polls}" class="card" th:attr="data-poll-id=${poll.id}" onclick="redirectToPoll(this)">
+            <!--                <div class="poll-image" style="background-image: url('https://source.unsplash.com/random/600x400/?technology');"></div>-->
+            <div class="card-header">
+                <h2 class="card-title" th:text="${poll.question}"></h2>
+            </div>
+            <div class="card-content overflow-y-auto">
+                <div class="options">
+                    <div th:each="option : ${poll.options}"
+                         th:classappend="(${poll.expired && #lists.contains(poll.winnerOptionIds, option.id)} ? 'winner-option' : '')"
+                         class="option">
+                        <div>
+                            <strong th:text="${option.text}" class=""></strong>
+                            <span><small class="votes" th:text="'(' + ${option.votes} + ' votos)'"></small></span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated custom-color-bar"
+                                 role="progressbar"
+                                 th:aria-valuenow="${option.percentage}"
+                                 aria-valuemin="0"
+                                 aria-valuemax="100"
+                                 th:style="'width: ' + ${option.percentage} + '%;'">
+                                <span class="bar-text"
+                                      th:text="${#numbers.formatDecimal(option.percentage, 1, 1)} + '%'"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="poll-stats">
+                        <span>
+                            <i class="fas fa-chart-bar"></i>
+                            <span th:text="${poll.totalVotes} + ' votos'"></span>
+                        </span>
+
+                    <span th:if="${poll.expired}" class="badge bg-timer-closed bg-warning">Finalizada</span>
+                    <span th:unless="${poll.expired}"
+                          class="badge bg-success bg-timer poll-timer"
+                          th:data-expires-at="${poll.expiresAt.toEpochMilli()}">
+                            <span th:text="${poll.timeLeft}"></span>
+                        </span>
+                </div>
+                <div class="card-footer" style="margin-top: 10px;">
+                    <div class="footer-stats">
+                            <span>
+                                <i class="far fa-user"></i>
+                                <span th:text="${poll.createdBy}"></span>
+                            </span>
+                        <span><i class="far fa-calendar"></i>
+                                <span th:text="${#temporals.format(poll.createdAt, 'dd/MM/yyyy')}"></span>
+                            </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:if="${totalPages > 1}" class="pagination-controls">
+    <a th:if="${currentPage > 0}"
+       th:href="@{/polls/voted-polls(page=${currentPage - 1}, size=${pageSize})}"
+       class="btn btn-outline-primary">
+        ‹ Anterior
+    </a>
+
+    <span th:each="page : ${#numbers.sequence(0, totalPages - 1)}">
+            <a th:if="${page == currentPage}"
+               class="btn btn-primary"
+               th:text="${page + 1}">1</a>
+            <a th:unless="${page == currentPage}"
+               th:href="@{/polls/voted-polls(page=${page}, size=${pageSize})}"
+               class="btn btn-outline-secondary"
+               th:text="${page + 1}">1</a>
+        </span>
+
+    <a th:if="${currentPage < totalPages - 1}"
+       th:href="@{/polls/voted-polls(page=${currentPage + 1}, size=${pageSize})}"
+       class="btn btn-outline-primary">
+        Próximo ›
+    </a>
+</div>
+
+<div th:if="${!polls.empty}" class="page-info">
+    <small>
+        Página <span th:text="${currentPage + 1}">1</span> de
+        <span th:text="${totalPages}">1</span> |
+        Total: <span th:text="${totalItems}">0</span> enquetes
+    </small>
+</div>
+
+<div th:replace="fragments/timer-script :: timer-script"></div>
+
+<script>
+    function redirectToPoll(element){
+        const pollId = element.getAttribute('data-poll-id');
+        window.location = '/poll/' + pollId;
+    }
+</script>
+
+<div th:insert="~{fragments/commons :: scripts}"></div>
+</body>
+<footer>
+    <div class="container">
+    </div>
+</footer>
+</html>

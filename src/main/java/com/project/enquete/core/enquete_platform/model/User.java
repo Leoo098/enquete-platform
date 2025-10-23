@@ -31,4 +31,7 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @Transient
     private List<Vote> votes;
+
+    @Column(name = "social_login")
+    private boolean socialLogin;
 }

@@ -3,7 +3,8 @@ create table users(
     username varchar(20) not null,
     email varchar(255) not null,
     password char(60) not null,
-    role varchar(20) not null default 'USER' check (role in('USER', 'ADMIN'))
+    role varchar(20) not null default 'USER' check (role in('USER', 'ADMIN'),
+    social_login boolean default 'false')
 );
 
 create table polls(
@@ -30,7 +31,6 @@ create table votes(
     user_id uuid not null,
     option_id bigint not null,
     voted_at timestamp with time zone not null,
-    device_token varchar(255),
 
     constraint fk_user foreign key (user_id) references "users"(id),
     constraint fk_option foreign key (option_id) references "options"(id)

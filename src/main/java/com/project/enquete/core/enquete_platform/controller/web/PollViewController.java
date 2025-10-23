@@ -51,7 +51,7 @@ public class PollViewController {
 
         try {
             pollService.createPoll(dto);
-            return "redirect:/polls";
+            return "redirect:/polls/my-polls";
         }
         catch (Exception e){
             model.addAttribute("error", "Erro ao criar enquete");

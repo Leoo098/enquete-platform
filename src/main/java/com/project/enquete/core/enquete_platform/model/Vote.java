@@ -24,7 +24,4 @@ public class Vote {
 
     @Column(nullable = false)
     private Instant votedAt;
-
-    @Column//(nullable = false)
-    private String deviceToken;
 }

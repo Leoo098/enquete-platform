@@ -23,16 +23,15 @@ public class PollForm {
     @NotBlank(message = "A unidade de tempo é obrigatória")
     private String timeUnit;
 
-    @Valid
     @Size(min = 2)
     private List<OptionForm> options;
 
+    @NotBlank
     private String visibility;
 
     public PollForm(){
         this.options = new ArrayList<>();
         this.options.add(new OptionForm());
         this.options.add(new OptionForm());
-        this.visibility = "public";
     }
 }

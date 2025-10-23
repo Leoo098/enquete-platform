@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar de usuário</title>
+    <div th:insert="~{fragments/commons :: head}"></div>
+</head>
+<body>
+
+<div class="container-form">
+    <div class="user-card">
+        <div class="user-header">
+            <h2>Alterar nome de usuário</h2><br>
+        </div>
+        <form th:object="${user}" th:action="@{/account/change-username}" method="post">
+            <div class="card-content">
+                <div class="user-details">
+                    <div class="form-group">
+                        <label for="username" class="form-label">Insira um novo nome de usuário</label>
+                        <input type="text" class="form-control"
+                               th:classappend="${#fields.hasErrors('username')} ? 'is-invalid' : ''"
+                               th:field="*{username}"
+                               id="username"
+                               th:attr="placeholder=${user.username}" required>
+                        <div class="invalid-feedback" th:errors="*{username}"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-grid gap-2">
+                <button type="button" class="btn-confirm text-white mb-3" id="submitBtn" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                    Confirmar
+                </button>
+                <a th:href="@{/account}" class="btn btn-outline-secondary mb-3" id="cancelBtn">
+                    Cancelar
+                </a>
+            </div>
+
+            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Salvar alterações</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Tem certeza que deseja alterar seu nome de usuário?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Não</button>
+                            <button type="submit" class="btn btn-primary">Sim</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<div th:insert="~{fragments/commons :: scripts}"></div>
+</body>
+</html>

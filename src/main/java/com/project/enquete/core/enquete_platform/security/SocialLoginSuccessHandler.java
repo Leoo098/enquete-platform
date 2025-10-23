@@ -56,6 +56,7 @@ public class SocialLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
         user.setUsername(getLoginFromEmail(email));
         user.setEmail(email);
         user.setPassword(encoder.encode(UUID.randomUUID().toString()));
+        user.setSocialLogin(true);
 
         userService.save(mapper.toDTO(user));
         return user;

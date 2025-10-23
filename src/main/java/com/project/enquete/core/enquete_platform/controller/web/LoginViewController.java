@@ -1,6 +1,5 @@
 package com.project.enquete.core.enquete_platform.controller.web;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.project.enquete.core.enquete_platform.dto.request.UserDTO;
 import com.project.enquete.core.enquete_platform.dto.response.OAuthTokenResponse;
 import com.project.enquete.core.enquete_platform.form.UserForm;
@@ -39,15 +38,17 @@ public class LoginViewController {
     }
 
     @PostMapping("/register")
-    public String registerUser(@ModelAttribute @Valid UserForm userForm,
+    public String registerUser(@ModelAttribute("user") @Valid UserForm userForm,
                                BindingResult result){
+        UserDTO dto = convertToDto(userForm);
+
+        userService.validateUser(userForm, result);
+
         if (result.hasErrors()){
             return "register";
         }
-
-        UserDTO dto = convertToDto(userForm);
-
         userService.save(dto);
+
         return "redirect:/";
     }
 
@@ -55,13 +56,14 @@ public class LoginViewController {
         return new UserDTO(
                 userForm.getUsername(),
                 userForm.getEmail(),
-                userForm.getPassword()
+                userForm.getPassword(),
+                userForm.getPasswordConfirmation()
         );
     }
 
     @GetMapping("/authorized")
     public String getAuthorizationCode(@RequestParam("code") String code,
-                                                       HttpServletResponse response) throws JsonProcessingException {
+                                                       HttpServletResponse response){
 
         OAuthTokenResponse tokenResponse = jwtTokenService.exchangeCodeForToken(code);
 

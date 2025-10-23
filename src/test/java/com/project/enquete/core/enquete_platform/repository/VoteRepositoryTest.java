@@ -29,7 +29,6 @@ public class VoteRepositoryTest {
         vote.setUser(null);
         vote.setOption(option);
         vote.setVotedAt(Instant.now());
-        vote.setDeviceToken(null);
 
         var voted = repository.save(vote);
         System.out.println("Voto contabilizado: " + voted);

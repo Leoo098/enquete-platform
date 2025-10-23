@@ -8,80 +8,104 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
 
     <style>
-        body {
-            background: linear-gradient(135deg,rgba(2, 0, 36, 1) 0%, rgba(47, 97, 224, 1) 48%, rgba(37, 176, 204, 1) 80%);
-            height: 100vh;
-            display: flex;
-            align-items: center;
-        }
-        .form-control {
-            height: 50px;
-            border-radius: 8px;
-        }
-        .input-group-text {
-            position: absolute;
-            z-index: 10;
-            height: 50px;
-            background: transparent;
-            border: none;
-        }
         .btn-login {
             background: linear-gradient(to right,rgba(2, 0, 36, 1) 0%, rgba(37, 176, 204, 1) 80%);
             border: none;
             height: 50px;
             border-radius: 8px;
             font-weight: 600;
+            max-width: 300px;
+            display: block;
+            margin: 0 auto;
         }
     </style>
 </head>
-<body>
-<div class="container" id="register-user">
-    <div class="title">
-        <h2>Crie sua conta</h2>
+<body class="gradient-bg">
+<main class="main-container">
+    <div class="register-user">
+        <div class="title">
+            <h2>Crie sua conta</h2>
+        </div>
+
+        <form th:object="${user}" th:action="@{/register}" method="post">
+
+            <div class="form-group">
+                <label class="form-label">Nome de Usuário</label>
+                <input type="text" class="form-control"
+                       th:classappend="${#fields.hasErrors('username')} ? 'is-invalid' : ''"
+                       th:field="*{username}"
+                       placeholder="Seu nome de usuário" required>
+                <div class="invalid-feedback" th:errors="*{username}"></div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control"
+                       th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''"
+                       th:field="*{email}"
+                       placeholder="Seu email" required>
+                <div class="invalid-feedback" th:errors="*{email}"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="form-label">Senha</label>
+                <input type="password" class="form-control" id="password"
+                       th:field="*{password}"
+                       placeholder="Insira uma senha" required
+                       onkeyup="validatePassword()">
+            </div>
+            <small>Sua senha deve conter pelo menos 8 caracteres</small>
+
+            <div class="form-group">
+                <label for="passwordConfirmation" class="form-label">Confirmar Senha</label>
+                <input type="password" class="form-control" id="passwordConfirmation"
+                       th:field="*{passwordConfirmation}"
+                       placeholder="Confirme sua senha" required
+                       onkeyup="validatePassword()">
+                <div id="passwordMessage" class="form-text"></div>
+            </div>
+
+            <div th:if="${#fields.hasErrors('passwordsMatch')}" class="alert alert-danger">
+                <span th:errors="*{passwordsMatch}"></span>
+            </div>
+
+            <button type="submit" class="btn btn-login btn-primary w-100 text-white mb-3" id="submitBtn">
+                Confirmar
+            </button>
+        </form>
     </div>
 
-    <form th:object="${user}" th:action="@{/register}" method="post">
+</main>
 
-        <div class="form-group">
-            <label class="form-label">Nome de Usuário</label>
-            <input type="text" class="form-control"
-                   th:classappend="${#fields.hasErrors('username')} ? 'is-invalid' : ''"
-                   th:field="*{username}"
-                   placeholder="Seu nome de usuário">
-            <div class="invalid-feedback" th:errors="*{username}"></div>
-        </div>
+<script>
+    function validatePassword() {
+    const password = document.getElementById('password');
+    const passwordConfirmation = document.getElementById('passwordConfirmation');
+    const message = document.getElementById('passwordMessage');
 
-        <div class="form-group">
-            <label class="form-label">Email</label>
-            <input type="text" class="form-control"
-                   th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''"
-                   th:field="*{email}"
-                   placeholder="Seu email">
-            <div class="invalid-feedback" th:errors="*{email}"></div>
-        </div>
+    password.classList.remove('is-valid', 'is-invalid');
+    passwordConfirmation.classList.remove('is-valid', 'is-invalid');
+    message.classList.remove('valid-feedback', 'invalid-feedback');
 
-        <div class="form-group">
-            <label class="form-label">Senha</label>
-            <input type="text" class="form-control"
-                   th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''"
-                   th:field="*{password}"
-                   placeholder="Sua senha">
-            <div class="invalid-feedback" th:errors="*{password}"></div>
-        </div>
+    if (password.value === '' || passwordConfirmation.value === '') {
+        message.textContent = '';
+        return;
+    }
 
-<!--        <div class="form-group">-->
-<!--            <label class="form-label">Confirme sua senha</label>-->
-<!--            <input type="text" class="form-control"-->
-<!--                   th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''"-->
-<!--                   th:field="*{password}"-->
-<!--                   placeholder="Confirme sua senha">-->
-<!--            <div class="invalid-feedback" th:errors="*{password}"></div>-->
-<!--        </div>-->
-
-        <button type="submit" class="btn btn-login btn-primary w-100 text-white mb-3">
-            Confirmar
-        </button>
-    </form>
-</div>
+    if (password.value === passwordConfirmation.value) {
+        password.classList.add('is-valid');
+        passwordConfirmation.classList.add('is-valid');
+        message.textContent = '✓ Senhas coincidem';
+        message.classList.add('valid-feedback');
+        submitBtn.disabled = false;
+    } else {
+        password.classList.add('is-invalid');
+        passwordConfirmation.classList.add('is-invalid');
+        message.textContent = '✗ As senhas não coincidem';
+        message.classList.add('invalid-feedback');
+        submitBtn.disabled = true;
+    }
+}
+</script>
 </body>
 </html>

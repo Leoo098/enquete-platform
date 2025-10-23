@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Minha conta</title>
+    <div th:insert="~{fragments/commons :: head}"></div>
+</head>
+<body>
+<div th:insert="~{fragments/commons :: header}"></div>
+<div class="container">
+    <div class="user-card">
+        <div class="user-header">
+            <h2>Detalhes da conta</h2><br>
+        </div>
+        <div class="card-content">
+            <div class="user-details">
+                <h4>Nome de usuário</h4>
+                <div class="span-user">
+                    <span th:text="${authentication.getName()}"></span>
+                    <span><a class="edit-btn" th:href="@{/account/change-username}">Editar<i class="fa-solid fa-pencil m-2"></i></a></span>
+                </div>
+            </div>
+
+            <div class="user-details">
+                <h4>Email</h4>
+                <span th:text="${user.getEmail()}"></span>
+            </div>
+
+            <div th:if="${!user.socialLogin}" class="user-details">
+                <h4>Alterar senha</h4>
+                <div class="span-user">
+                    <span>********</span>
+                    <span><a class="edit-btn" th:href="@{/account/check-password}">Editar<i class="fa-solid fa-pencil m-2"></i></a></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:if="${toast != null}">
+    <div th:if="${toastMessage != null}"
+         th:classappend="'toast ' + ${toast} + ' show'"
+         th:text="${toastMessage}">
+    </div>
+</div>
+
+<div th:insert="~{fragments/commons :: scripts}"></div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+            const toast = document.querySelector('.toast');
+            if (toast) {
+                setTimeout(function() {
+                    toast.classList.remove('show');
+                }, 5000);
+
+                // Fechar ao clicar
+                toast.addEventListener('click', function() {
+                    toast.classList.remove('show');
+                });
+            }
+        });
+</script>
+</body>
+
+<footer>
+    <div class="container">
+    </div>
+</footer>
+</html>
