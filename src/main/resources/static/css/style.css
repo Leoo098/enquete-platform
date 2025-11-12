@@ -100,6 +100,11 @@
             align-items: center;
         }
 
+        .logo a{
+            text-decoration: none;
+            color: white;
+        }
+
         .logo i {
             margin-right: 10px;
             font-size: 2rem;
@@ -284,7 +289,10 @@
 
         .features {
             padding: 5rem 0;
-            background-color: #adacac;
+            background-color: #bfbdbd;
+            box-shadow:
+                inset 0 10px 15px -5px rgba(0, 0, 0, 0.1),
+                inset 0 -10px 15px -5px rgba(0, 0, 0, 0.1);
         }
 
         .section-title {
@@ -334,8 +342,8 @@
         }
 
         .trending-polls {
-            padding: 4rem 0;
-            background: #dedcdc;
+            padding: 3.5rem 0;
+            background: #d4d6d9;
         }
 
         .horizontal-scroll-wrapper {
@@ -350,6 +358,7 @@
             scroll-behavior: smooth;
             scroll-snap-type: x mandatory;
             -ms-overflow-style: none;
+            scrollbar-color: gray #d4d6d9;
         }
 
         .horizontal-scroll {

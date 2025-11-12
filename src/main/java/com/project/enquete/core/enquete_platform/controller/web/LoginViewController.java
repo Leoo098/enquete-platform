@@ -1,20 +1,20 @@
 package com.project.enquete.core.enquete_platform.controller.web;
 
 import com.project.enquete.core.enquete_platform.dto.request.UserDTO;
-import com.project.enquete.core.enquete_platform.dto.response.OAuthTokenResponse;
-import com.project.enquete.core.enquete_platform.form.UserForm;
-import com.project.enquete.core.enquete_platform.security.jwt.JwtTokenService;
+import com.project.enquete.core.enquete_platform.dto.validator.UserValidator;
+import com.project.enquete.core.enquete_platform.dto.form.UserForm;
 import com.project.enquete.core.enquete_platform.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +24,7 @@ import java.util.Map;
 public class LoginViewController {
 
     private final UserService userService;
-    private final JwtTokenService jwtTokenService;
+    private final UserValidator userValidator;
 
     @GetMapping("/login")
     public String loginPage(){
@@ -40,42 +40,16 @@ public class LoginViewController {
     @PostMapping("/register")
     public String registerUser(@ModelAttribute("user") @Valid UserForm userForm,
                                BindingResult result){
-        UserDTO dto = convertToDto(userForm);
 
-        userService.validateUser(userForm, result);
+        UserDTO dto = userService.convertToDto(userForm);
+
+        userValidator.validateUser(dto, result);
 
         if (result.hasErrors()){
             return "register";
         }
+
         userService.save(dto);
-
-        return "redirect:/";
-    }
-
-    private static UserDTO convertToDto(UserForm userForm) {
-        return new UserDTO(
-                userForm.getUsername(),
-                userForm.getEmail(),
-                userForm.getPassword(),
-                userForm.getPasswordConfirmation()
-        );
-    }
-
-    @GetMapping("/authorized")
-    public String getAuthorizationCode(@RequestParam("code") String code,
-                                                       HttpServletResponse response){
-
-        OAuthTokenResponse tokenResponse = jwtTokenService.exchangeCodeForToken(code);
-
-        String accessToken = tokenResponse.getAccessToken();
-        String refreshToken = tokenResponse.getRefreshToken();
-
-        ResponseCookie accessTokenCookie = jwtTokenService.createAccessTokenCookie(accessToken);
-
-        ResponseCookie refreshTokenCookie = jwtTokenService.createRefreshTokenCookie(refreshToken);
-
-        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
-        response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
 
         return "redirect:/";
     }
@@ -93,5 +67,4 @@ public class LoginViewController {
     public String logout(HttpServletResponse response) {
         return "redirect:/";
     }
-
 }

@@ -1,8 +1,9 @@
 package com.project.enquete.core.enquete_platform.security;
 
-import com.project.enquete.core.enquete_platform.controller.mappers.UserMapper;
 import com.project.enquete.core.enquete_platform.model.User;
+import com.project.enquete.core.enquete_platform.repository.UserRepository;
 import com.project.enquete.core.enquete_platform.security.auth.CustomAuthentication;
+import com.project.enquete.core.enquete_platform.security.jwt.JwtTokenService;
 import com.project.enquete.core.enquete_platform.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,33 +22,50 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class SocialLoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
+public class UnifiedAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
     private final UserService userService;
-    private final UserMapper mapper;
     private final PasswordEncoder encoder;
-    
+    private final JwtTokenService jwtTokenService;
+    private final UserRepository userRepository;
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
                                         Authentication authentication) throws ServletException, IOException {
 
-        OAuth2AuthenticationToken oAuth2AuthenticationToken = (OAuth2AuthenticationToken) authentication;
-        OAuth2User oAuth2User = oAuth2AuthenticationToken.getPrincipal();
+        User user = null;
 
-        String email = oAuth2User.getAttribute("email");
+        if (authentication instanceof OAuth2AuthenticationToken oauthToken){
+            OAuth2User oAuth2User = oauthToken.getPrincipal();
+            String email = oAuth2User.getAttribute("email");
+            user = getUserOrRegister(email);
 
+            jwtTokenService.storeTokensInCookies(response, user);
+        }
+        else if (authentication instanceof CustomAuthentication) {
+            User userPrincipal = (User) authentication.getPrincipal();
+            user = userService.findByEmail(userPrincipal.getEmail());
+
+            if (user != null){
+                jwtTokenService.storeTokensInCookies(response, user);
+            }
+        }
+
+        if (user != null){
+            CustomAuthentication customAuth = new CustomAuthentication(user);
+            SecurityContextHolder.getContext().setAuthentication(customAuth);
+        }
+
+        super.onAuthenticationSuccess(request, response, authentication);
+    }
+
+    private User getUserOrRegister(String email) {
         User user = userService.findByEmail(email);
-        
         if (user == null){
             user = registerUser(email);
         }
-
-        authentication = new CustomAuthentication(user);
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        super.onAuthenticationSuccess(request, response, authentication);
+        return user;
     }
 
     private User registerUser(String email) {
@@ -58,7 +76,7 @@ public class SocialLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
         user.setPassword(encoder.encode(UUID.randomUUID().toString()));
         user.setSocialLogin(true);
 
-        userService.save(mapper.toDTO(user));
+        userRepository.save(user);
         return user;
     }
 
@@ -72,3 +90,4 @@ public class SocialLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
         return email.substring(0, 19);
     }
 }
+

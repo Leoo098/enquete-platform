@@ -1,11 +1,10 @@
 package com.project.enquete.core.enquete_platform.service;
 
-import com.project.enquete.core.enquete_platform.dto.request.UserDTO;
-import com.project.enquete.core.enquete_platform.dto.validator.UserValidator;
 import com.project.enquete.core.enquete_platform.controller.mappers.UserMapper;
-import com.project.enquete.core.enquete_platform.form.PasswordForm;
-import com.project.enquete.core.enquete_platform.form.UserForm;
-import com.project.enquete.core.enquete_platform.form.UsernameForm;
+import com.project.enquete.core.enquete_platform.dto.request.UserDTO;
+import com.project.enquete.core.enquete_platform.dto.form.PasswordForm;
+import com.project.enquete.core.enquete_platform.dto.form.UserForm;
+import com.project.enquete.core.enquete_platform.dto.form.UsernameForm;
 import com.project.enquete.core.enquete_platform.model.User;
 import com.project.enquete.core.enquete_platform.repository.UserRepository;
 import com.project.enquete.core.enquete_platform.security.auth.CustomAuthentication;
@@ -14,7 +13,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BindingResult;
 
 import java.util.UUID;
 
@@ -25,11 +23,9 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
     private final UserMapper mapper;
-    private final UserValidator validator;
 
     public void save(UserDTO userDTO){
         User user = mapper.toEntity(userDTO);
-//        validator.validateUser(user);
         var password = user.getPassword();
         user.setPassword(encoder.encode(password));
         userRepository.save(user);
@@ -52,8 +48,6 @@ public class UserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User userPrincipal = (User) authentication.getPrincipal();
         User user = userRepository.findByEmail(userPrincipal.getEmail());
-
-//        User user = userRepository.findByUsername(username);
 
         user.setUsername(usernameForm.getUsername());
 
@@ -79,25 +73,21 @@ public class UserService {
     }
 
     public void updateAuthentication(User updateUser){
-        Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
-
         Authentication newAuth = new CustomAuthentication(updateUser);
 
         SecurityContextHolder.getContext().setAuthentication(newAuth);
     }
 
     public boolean usernameExists(String username) {
-        return userRepository.existsByUsername(username);
+        return userRepository.existsByUsernameIgnoreCase(username);
     }
 
-    public void validateUser(UserForm user, BindingResult errors) {
-
-        if (userRepository.existsByUsername(user.getUsername())) {
-            errors.rejectValue("username", "error.user", "Nome de usuário já cadastrado!");
-        }
-
-        if (userRepository.existsByEmail(user.getEmail())) {
-            errors.rejectValue("email", "error.user", "Email já cadastrado!");
-        }
+    public UserDTO convertToDto(UserForm userForm) {
+        return new UserDTO(
+                userForm.getUsername(),
+                userForm.getEmail(),
+                userForm.getPassword(),
+                userForm.getPasswordConfirmation()
+        );
     }
 }

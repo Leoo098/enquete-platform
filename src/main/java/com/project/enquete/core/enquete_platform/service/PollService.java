@@ -1,19 +1,20 @@
 package com.project.enquete.core.enquete_platform.service;
 
+import com.project.enquete.core.enquete_platform.dto.request.OptionDTO;
 import com.project.enquete.core.enquete_platform.dto.request.PollDTO;
 import com.project.enquete.core.enquete_platform.dto.request.VoteDTO;
 import com.project.enquete.core.enquete_platform.dto.response.OptionResponseDTO;
 import com.project.enquete.core.enquete_platform.dto.response.PollResponseDTO;
-import com.project.enquete.core.enquete_platform.dto.validator.VoteValidator;
 import com.project.enquete.core.enquete_platform.controller.mappers.PollMapper;
-import com.project.enquete.core.enquete_platform.model.Option;
-import com.project.enquete.core.enquete_platform.model.Poll;
-import com.project.enquete.core.enquete_platform.model.User;
-import com.project.enquete.core.enquete_platform.model.Vote;
+import com.project.enquete.core.enquete_platform.dto.form.PollForm;
+import com.project.enquete.core.enquete_platform.model.*;
 import com.project.enquete.core.enquete_platform.repository.OptionRepository;
 import com.project.enquete.core.enquete_platform.repository.PollRepository;
 import com.project.enquete.core.enquete_platform.repository.VoteRepository;
+import com.project.enquete.core.enquete_platform.repository.projection.VoteInfoProjection;
 import com.project.enquete.core.enquete_platform.security.services.SecurityService;
+import com.project.enquete.core.enquete_platform.service.dto.PollVoteInfo;
+import com.project.enquete.core.enquete_platform.service.dto.UserVoteInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +36,6 @@ public class PollService {
     private final OptionRepository optionRepository;
     private final SecurityService securityService;
     private final PollMapper mapper;
-    private final VoteValidator voteValidator;
     private final UserService userService;
 
     public PollResponseDTO createPoll(PollDTO pollDTO){
@@ -44,7 +45,9 @@ public class PollService {
         poll.setCreatedBy(user);
         pollRepository.save(poll);
 
-        return mapper.toResponseDTO(poll, pollDTO);
+        return getPoll(poll.getId());
+
+//        return mapper.toResponseDTO(poll, pollDTO);
     }
 
     public void delete(UUID id){
@@ -55,8 +58,6 @@ public class PollService {
         Poll poll = pollRepository.findById(id).orElse(null);
 
         return getResult(poll);
-
-//        return getPollResponseDTO(poll, result.optionsWithPercentage(), result.totalVotes(), result.winnerOptionIds());
     }
 
     public Page<PollResponseDTO> getAllPolls(Pageable pageable) {
@@ -79,7 +80,6 @@ public class PollService {
         Page<Poll> polls = pollRepository.findVotedPolls(userId, pageable);
 
         return polls.map(this::getResult);
-
     }
 
     public List<PollResponseDTO> getRandomPublicPolls(){
@@ -90,46 +90,90 @@ public class PollService {
                 .toList();
     }
 
-    private PollResponseDTO getResult(Poll poll) {
-        int totalVotes = voteRepository.countVotesByPollId(poll.getId());
-        List<OptionResponseDTO> optionsWithPercentage = new ArrayList<>();
-        List<Long> winnerOptionIds = new ArrayList<>();
-        int maxVotes = -1;
+    private PollResponseDTO getResult(Poll poll){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        for (var option : poll.getOptions()){
-            int votes = voteRepository.countVotesByOptionId(option.getId());
+        PollVoteInfo info = getPollVoteInfo(poll.getId());
+        UserVoteInfo userVoteInfo = getUserVoteInfo(authentication, poll.getId());
 
-            double percentage = totalVotes > 0 ? (votes * 100.0) / totalVotes : 0.0;
+        List<OptionResponseDTO> options = calculateOptionsWithPercentages(
+                poll.getOptions(), info.votesByOption(), info.totalVotes()
+        );
 
-            OptionResponseDTO optionDTO = new OptionResponseDTO(option.getId(), option.getText(), votes, percentage);
-            optionsWithPercentage.add(optionDTO);
+        List<Long> winnerOptionIds = findWinnerOptionIds(info.votesByOption());
 
-            if (votes > maxVotes){
-                maxVotes = votes;
-                winnerOptionIds.clear();
-                winnerOptionIds.add(option.getId());
-            }
-            else if (votes == maxVotes && votes > 0){
-                winnerOptionIds.add(option.getId());
-            }
+        return buildPollResponseDTO(poll, options, info.totalVotes(), userVoteInfo, winnerOptionIds);
+    }
+
+    private PollVoteInfo getPollVoteInfo(UUID pollId){
+        List<VoteInfoProjection> results = voteRepository.findVoteInfo(pollId);
+
+        Map<Long, Integer> votesByOption = results.stream()
+                .collect(Collectors.toMap(
+                        VoteInfoProjection::getOptionId,
+                        p -> p.getVoteCount().intValue()
+                ));
+
+        int totalVotes = votesByOption.values().stream().mapToInt(Integer::intValue).sum();
+
+        return new PollVoteInfo(totalVotes, votesByOption);
+    }
+
+    private UserVoteInfo getUserVoteInfo(Authentication authentication, UUID pollId){
+        if (!authentication.isAuthenticated()){
+            return new UserVoteInfo(null, false);
         }
 
-        if (maxVotes <= 0) {
-            winnerOptionIds.clear();
+        String username = authentication.getName();
+        User user = userService.findByUsername(username);
+
+        if (user == null) {
+            return new UserVoteInfo(null, false);
         }
+
+        Long voteOptionId = voteRepository.findVotedOptionByUserAndPoll(user.getId(), pollId);
+
+        return new UserVoteInfo(voteOptionId, voteOptionId != null);
+    }
+
+    private List<OptionResponseDTO> calculateOptionsWithPercentages(
+            List<Option> options, Map<Long, Integer> votesByOption, int totalVotes){
+
+        return options.stream()
+                .map(option -> {
+                        int votes = votesByOption.getOrDefault(option.getId(), 0);
+                        double percentage = totalVotes > 0 ? (votes * 100.0) / totalVotes : 0.0;
+                        return new OptionResponseDTO(option.getId(), option.getText(), votes, percentage);
+                    })
+                .toList();
+    }
+
+    private List<Long> findWinnerOptionIds(Map<Long, Integer> votesByOption){
+        if (votesByOption.isEmpty()) return List.of();
+
+        int maxVotes = Collections.max(votesByOption.values());
+        if (maxVotes <= 0) return List.of();
+
+        return votesByOption.entrySet().stream()
+                .filter(entry -> entry.getValue() == maxVotes)
+                .map(Map.Entry::getKey)
+                .toList();
+    }
+
+    private PollResponseDTO buildPollResponseDTO(Poll poll, List<OptionResponseDTO> options, Integer totalVotes, UserVoteInfo userVoteInfo, List<Long> winnerOptionIds){
         return new PollResponseDTO(
                 poll.getId(),
                 poll.getQuestion(),
                 poll.getCreatedAt(),
                 poll.getExpiresAt(),
                 calculateTimeLeft(Instant.now(), poll.getExpiresAt()),
-                optionsWithPercentage,
+                options,
                 totalVotes,
                 poll.getCreatedBy().getUsername(),
                 poll.getVisibility(),
                 poll.getCreatedBy().getId(),
-                null,
-                false,
+                userVoteInfo.votedOptionId(),
+                userVoteInfo.hasVoted(),
                 Instant.now().isAfter(poll.getExpiresAt()),
                 winnerOptionIds
         );
@@ -147,31 +191,17 @@ public class PollService {
         return "Restam " + hours + "h " + minutes + "m";
     }
 
-    public Long getUserVoteOptionId(UUID pollId, UUID userId) {
-        return voteRepository.findByUserIdAndOptionPollId(userId, pollId)
-                .map(vote -> vote.getOption().getId())
-                .orElse(null);
-    }
+    public PollDTO convertToDto(PollForm form) {
+        List<OptionDTO> optionDTOs = form.getOptions().stream()
+                .map(opt -> new OptionDTO(opt.getText(), null))
+                .toList();
 
-    public PollResponseDTO getPollWithUserVote(UUID pollId, UUID userId) {
-        PollResponseDTO originalPoll = getPoll(pollId);
-        Long userVoteOptionId = getUserVoteOptionId(pollId, userId);
-
-        return new PollResponseDTO(
-                originalPoll.id(),
-                originalPoll.question(),
-                originalPoll.createdAt(),
-                originalPoll.expiresAt(),
-                originalPoll.timeLeft(),
-                originalPoll.options(),
-                originalPoll.totalVotes(),
-                originalPoll.createdBy(),
-                originalPoll.visibility(),
-                originalPoll.userId(),
-                userVoteOptionId,
-                userVoteOptionId != null,
-                originalPoll.isExpired(),
-                originalPoll.winnerOptionIds()
+        return new PollDTO(
+                form.getQuestion(),
+                form.getDuration(),
+                TimeUnit.valueOf(form.getTimeUnit()),
+                optionDTOs,
+                form.getVisibility()
         );
     }
 
@@ -182,7 +212,6 @@ public class PollService {
         vote.setUser(user);
         vote.setOption(option);
         vote.setVotedAt(Instant.now());
-//        voteValidator.validateVote(vote);
 
         voteRepository.save(vote);
     }

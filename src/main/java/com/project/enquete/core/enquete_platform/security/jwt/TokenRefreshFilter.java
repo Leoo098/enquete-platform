@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
-import org.springframework.security.oauth2.core.OAuth2AuthorizationException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -30,14 +29,10 @@ public class TokenRefreshFilter extends OncePerRequestFilter {
 
         String path = request.getRequestURI();
 
-        // Ignorar endpoints públicos
         if (path.startsWith("/login")) {
             filterChain.doFilter(request, response);
             return;
         }
-
-        System.out.println("=== JWT CUSTOM FILTER ===");
-        System.out.println("URL: " + request.getRequestURI());
 
         try {
             String accessToken = jwtTokenService.extractAccessToken(request);
@@ -77,10 +72,5 @@ public class TokenRefreshFilter extends OncePerRequestFilter {
         catch (HttpClientErrorException e) {
             logoutService.forceLogout(request, response);
         }
-//        catch (OAuth2AuthorizationException e) {
-//            if (e.getError().getErrorCode().equals("invalid_grant")) {
-//                logoutService.forceLogout(request, response);
-//            }
-//        }
     }
 }

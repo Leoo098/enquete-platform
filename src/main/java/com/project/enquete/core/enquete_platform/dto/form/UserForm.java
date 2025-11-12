@@ -1,4 +1,4 @@
-package com.project.enquete.core.enquete_platform.form;
+package com.project.enquete.core.enquete_platform.dto.form;
 
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Email;
@@ -20,7 +20,7 @@ public class UserForm {
     private String email;
 
     @NotBlank(message = "Campo obrigatório")
-//    @Size(min = 8)
+    @Size(min = 6, max = 60, message = "Sua senha deve conter pelo menos 8 caracteres")
     private String password;
 
     @NotBlank(message = "Campo obrigatório")

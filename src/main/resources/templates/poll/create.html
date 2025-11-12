@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Criar Enquete</title>
-    <div th:insert="~{fragments/commons :: head}"></div>
-
+    <div th:replace="~{fragments/commons :: head}"></div>
 </head>
 <body>
   <div th:insert="~{fragments/commons :: header}"></div>
@@ -19,9 +18,9 @@
               <form th:object="${poll}" th:action="@{/poll/create}" method="post">
                   <div class="form-group">
                       <label class="form-label">Título</label>
-                      <input type="text" class="form-control"
+                      <input type="text" class="form-control" maxlength="100"
                              th:classappend="${#fields.hasErrors('question')} ? 'is-invalid' : ''"
-                             th:field="*{question}" required>
+                             th:field="*{question}" placeholder="Título da enquete" required>
                       <div class="invalid-feedback" th:errors="*{question}"></div>
                   </div>
 
@@ -52,7 +51,7 @@
                       <div id="options-container">
                           <div th:each="opt, status : *{options}" class="option-group mb-2">
                               <div class="input-group">
-                                  <input type="text" class="form-control"
+                                  <input type="text" class="form-control" maxlength="60"
                                          th:classappend="${#fields.hasErrors('options[' + status.index + '].text')} ? 'is-invalid' : ''"
                                          th:field="*{options[__${status.index}__].text}"
                                          th:placeholder="'Opção ' + (${status.index} + 1)" required>

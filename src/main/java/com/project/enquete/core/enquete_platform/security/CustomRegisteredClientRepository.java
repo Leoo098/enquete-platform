@@ -1,6 +1,7 @@
 package com.project.enquete.core.enquete_platform.security;
 
-import com.project.enquete.core.enquete_platform.service.ClientService;
+import com.project.enquete.core.enquete_platform.model.Client;
+import com.project.enquete.core.enquete_platform.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CustomRegisteredClientRepository implements RegisteredClientRepository {
 
-    private final ClientService clientService;
+    private final ClientRepository clientRepository;
     private final TokenSettings tokenSettings;
     private final ClientSettings clientSettings;
 
@@ -29,12 +30,12 @@ public class CustomRegisteredClientRepository implements RegisteredClientReposit
 
     @Override
     public RegisteredClient findByClientId(String clientId) {
-        var client = clientService.getByClientId(clientId);
+        var client = clientRepository.findByClientId(clientId);
 
-        if (client == null){
-            return null;
-        }
+        return client != null ? toRegisteredClient(client) : null;
+    }
 
+    private RegisteredClient toRegisteredClient(Client client){
         return RegisteredClient
                 .withId(client.getId().toString())
                 .clientId(client.getClientId())

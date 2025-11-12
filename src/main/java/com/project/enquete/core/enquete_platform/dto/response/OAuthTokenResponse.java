@@ -27,9 +27,4 @@ public class OAuthTokenResponse {
     @JsonProperty("scope")
     private String scope;
 
-    public Instant getExpirationTime(){
-        return expiresIn != null ?
-                Instant.now().plusSeconds(expiresIn) :
-                Instant.now().plusSeconds(3600);
-    }
 }

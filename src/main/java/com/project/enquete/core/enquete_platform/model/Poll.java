@@ -36,5 +36,4 @@ public class Poll {
 
     @Column
     private String visibility;
-
 }

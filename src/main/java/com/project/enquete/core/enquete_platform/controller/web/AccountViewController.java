@@ -1,10 +1,8 @@
 package com.project.enquete.core.enquete_platform.controller.web;
 
-import com.project.enquete.core.enquete_platform.form.PasswordForm;
-import com.project.enquete.core.enquete_platform.form.UserForm;
-import com.project.enquete.core.enquete_platform.form.UsernameForm;
+import com.project.enquete.core.enquete_platform.dto.form.PasswordForm;
+import com.project.enquete.core.enquete_platform.dto.form.UsernameForm;
 import com.project.enquete.core.enquete_platform.model.User;
-import com.project.enquete.core.enquete_platform.security.auth.CustomAuthentication;
 import com.project.enquete.core.enquete_platform.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -103,20 +101,4 @@ public class AccountViewController {
 
         return "redirect:/account";
     }
-
-//    @PostMapping("/check-password")
-//    public String checkPassword(String typedPassword, Authentication authentication, BindingResult result){
-//        boolean checkedPassword = userService.checkPassword(typedPassword, authentication);
-//
-//        if (result.hasErrors()){
-//            result.rejectValue("typedPassword", "error.user", "A senha está incorreta!");
-//            return "account/check-password";
-//        }
-//
-//        if (checkedPassword){
-//            return "redirect:account/change-password";
-//        }
-//
-//        return "/check-password";
-//    }
 }

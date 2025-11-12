@@ -33,5 +33,9 @@ public class User {
     private List<Vote> votes;
 
     @Column(name = "social_login")
-    private boolean socialLogin;
+    private Boolean socialLogin = false;
+
+    public List<String> getRoles(){
+        return List.of(role.name());
+    }
 }

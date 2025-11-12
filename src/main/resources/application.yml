@@ -1,43 +1,32 @@
+app:
+  base-url: http://localhost:8080
+
 spring:
   application:
     name: enquete
   datasource:
-    url: jdbc:postgresql://localhost:5433/enquete
-    username: postgres
-    password: enquetep
+    url: ${DATABASE_URL}
     hikari:
       connection-init-sql: SET TIME ZONE 'UTC'
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: none
+      ddl-auto: validate
     properties:
       hibernate:
-        format_sql: true
-        jdbc:
-          time_zone: UTC
+        format_sql: false
   security:
     oauth2:
       authorization-server:
-        issuer-uri: http://localhost:8080
+        issuer-uri: ${app.base-url}
       client:
         registration:
           google:
             client-id: ${GOOGLE_CLIENT_ID}
             client-secret: ${GOOGLE_CLIENT_SECRET}
   thymeleaf:
-    prefix: classpath:/templates/
-    suffix: .html
-    cache: false # Desativado em desenvolvimento
-  mvc:
-    static-path-pattern: /**
-  web:
-    resources:
-      static-locations: classpath:/static/
-server:
-  servlet:
-    session:
-      timezone: UTC
+    cache: true
+
 logging:
   level:
     org:

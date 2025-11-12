@@ -1,12 +1,7 @@
 package com.project.enquete.core.enquete_platform.repository;
 
-import com.project.enquete.core.enquete_platform.repository.projection.OptionStats;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.List;
-import java.util.UUID;
 
 @SpringBootTest
 public class PollRepositoryTest {

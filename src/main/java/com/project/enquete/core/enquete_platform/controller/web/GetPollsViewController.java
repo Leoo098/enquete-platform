@@ -27,7 +27,7 @@ public class GetPollsViewController {
     @GetMapping("/my-polls")
     public String pollsPage(Model model, Authentication authentication,
                             @RequestParam(defaultValue = "0") int page,
-                            @RequestParam(defaultValue = "5") int size,
+                            @RequestParam(defaultValue = "8") int size,
                             @RequestParam(defaultValue = "createdAt") String sort
                             ) {
 
@@ -46,9 +46,10 @@ public class GetPollsViewController {
     @GetMapping("/voted-polls")
     public String votedPollsPage(Model model, Authentication authentication,
                                  @RequestParam(defaultValue = "0") int page,
-                                 @RequestParam(defaultValue = "5") int size,
-                                 @RequestParam(defaultValue = "vote_date") String sort){
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, sort));
+                                 @RequestParam(defaultValue = "8") int size
+//                                 @RequestParam(defaultValue = "vote_date") String sort
+    ){
+        Pageable pageable = PageRequest.of(page, size);
         Page<PollResponseDTO> pollsPage = pollService.getVotedPolls(pageable);
 
         model.addAttribute("polls", pollsPage.getContent());

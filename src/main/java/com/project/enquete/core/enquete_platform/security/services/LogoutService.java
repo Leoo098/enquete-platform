@@ -24,7 +24,7 @@ public class LogoutService {
 
     public void forceLogout(HttpServletRequest request, HttpServletResponse response) throws IOException {
         tokensHandle(request, response);
-        response.sendRedirect("http://localhost:8080/oauth2/authorize?response_type=code&client_id=enquete-client&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fauthorized");
+        response.sendRedirect("/login");
     }
 
     private void tokensHandle(HttpServletRequest request, HttpServletResponse response) {

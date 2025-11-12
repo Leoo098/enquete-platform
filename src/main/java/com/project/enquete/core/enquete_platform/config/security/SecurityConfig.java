@@ -1,8 +1,7 @@
 package com.project.enquete.core.enquete_platform.config.security;
 
 import com.project.enquete.core.enquete_platform.security.CustomLogoutHandler;
-import com.project.enquete.core.enquete_platform.security.SocialLoginSuccessHandler;
-import com.project.enquete.core.enquete_platform.security.jwt.JwtCustomAuthenticationFilter;
+import com.project.enquete.core.enquete_platform.security.UnifiedAuthenticationSuccessHandler;
 import com.project.enquete.core.enquete_platform.security.jwt.TokenRefreshFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,24 +25,23 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
-                                                   SocialLoginSuccessHandler successHandler,
-                                                   JwtCustomAuthenticationFilter jwtCustomAuthenticationFilter,
+                                                   UnifiedAuthenticationSuccessHandler successHandler,
                                                    CustomLogoutHandler customLogoutHandler,
                                                    TokenRefreshFilter tokenRefreshFilter) throws Exception{
         return http
 //                .csrf(AbstractHttpConfigurer::disable)
                 .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 .httpBasic(Customizer.withDefaults())
-                .formLogin(form -> form
-                        .loginPage("/login").permitAll()
-                )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/error", "/index","/home", "/static/**", "/css/**", "/enquetes").permitAll()
+                        .requestMatchers("/", "/error", "/index", "/static/**", "/css/**", "/images/**").permitAll()
                         .requestMatchers("/login/**", "/register").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/users/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/clients").hasRole("ADMIN")
 
                         .anyRequest().authenticated()
+                )
+                .formLogin(form -> form
+                        .loginPage("/login").permitAll()
+                        .successHandler(successHandler)
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/login")
@@ -54,7 +52,6 @@ public class SecurityConfig {
                 .oauth2ResourceServer(AbstractHttpConfigurer::disable)
 
                 .addFilterBefore(tokenRefreshFilter, BearerTokenAuthenticationFilter.class)
-                .addFilterBefore(jwtCustomAuthenticationFilter, BearerTokenAuthenticationFilter.class)
 
                 .logout(logout -> logout
                         .logoutUrl("/logout")
@@ -67,7 +64,6 @@ public class SecurityConfig {
                 .build();
     }
 
-    // CONFIGURA O PREFIXO ROLE
     @Bean
     public GrantedAuthorityDefaults grantedAuthorityDefaults(){
         return new GrantedAuthorityDefaults("");

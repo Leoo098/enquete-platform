@@ -16,40 +16,37 @@ public interface PollRepository extends JpaRepository<Poll, UUID> {
             countQuery = "SELECT COUNT(DISTINCT p) FROM Poll p WHERE p.createdBy.id = :userId")
     Page<Poll> findAllWithOptionsForCurrentUser(@Param("userId") UUID userId, Pageable pageable);
 
-
-    @Query("""
-        SELECT p FROM Poll p
-        JOIN FETCH p.createdBy u
-        WHERE u.username = :username
-        """)
-    List<Poll> findPollsByUsername(@Param("username") String username);
-
     @Query(value = """
             SELECT * FROM Polls
             WHERE expires_at > NOW()
             AND visibility = 'public'
             ORDER BY RANDOM()
-            LIMIT 4
+            LIMIT 6
             """, nativeQuery = true)
     List<Poll> findRandomPublicPolls();
 
     @Query(value = """
-            SELECT DISTINCT ON (p.id)
-                p.*,
-                v.voted_at as vote_date
-            FROM polls p
-            JOIN options o ON p.id = o.poll_id
-            JOIN votes v ON o.id = v.option_id
-            WHERE v.user_id = :user_id
-            ORDER BY p.id, vote_date DESC
-            """,
+            SELECT *
+            FROM (
+                SELECT DISTINCT ON (p.id) p.*, v.voted_at
+                FROM polls p
+                JOIN options o ON p.id = o.poll_id
+                JOIN votes v ON o.id = v.option_id
+                WHERE v.user_id = :user_id
+                ORDER BY p.id, v.voted_at DESC
+            ) AS subquery
+            ORDER BY voted_at DESC
+        """,
             countQuery = """
-            SELECT COUNT(DISTINCT p.id)
+        SELECT COUNT(*)
+        FROM (
+            SELECT DISTINCT p.id
             FROM polls p
             JOIN options o ON p.id = o.poll_id
             JOIN votes v ON o.id = v.option_id
             WHERE v.user_id = :user_id
-            """, nativeQuery = true)
+        ) AS distinct_polls
+        """, nativeQuery = true)
     Page<Poll> findVotedPolls(@Param("user_id") UUID userId, Pageable pageable);
 
 }

@@ -19,7 +19,7 @@ public class HomeViewController {
     private final PollService pollService;
 
     @GetMapping
-    public String indexPolls(Model model, Authentication authentication){
+    public String homePolls(Model model, Authentication authentication){
         List<PollResponseDTO> polls = pollService.getRandomPublicPolls();
 
         model.addAttribute("polls", polls);

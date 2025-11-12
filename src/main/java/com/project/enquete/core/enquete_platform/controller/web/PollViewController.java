@@ -1,13 +1,10 @@
 package com.project.enquete.core.enquete_platform.controller.web;
 
 import com.project.enquete.core.enquete_platform.controller.mappers.VoteMapper;
-import com.project.enquete.core.enquete_platform.dto.request.OptionDTO;
 import com.project.enquete.core.enquete_platform.dto.request.PollDTO;
 import com.project.enquete.core.enquete_platform.dto.request.VoteDTO;
 import com.project.enquete.core.enquete_platform.dto.response.PollResponseDTO;
-import com.project.enquete.core.enquete_platform.form.PollForm;
-import com.project.enquete.core.enquete_platform.model.Poll;
-import com.project.enquete.core.enquete_platform.model.TimeUnit;
+import com.project.enquete.core.enquete_platform.dto.form.PollForm;
 import com.project.enquete.core.enquete_platform.model.User;
 import com.project.enquete.core.enquete_platform.service.PollService;
 import jakarta.validation.Valid;
@@ -18,7 +15,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -47,11 +43,11 @@ public class PollViewController {
             return "poll/create";
         }
 
-        PollDTO dto = convertToDto(pollForm);
+        PollDTO dto = pollService.convertToDto(pollForm);
 
         try {
-            pollService.createPoll(dto);
-            return "redirect:/polls/my-polls";
+            PollResponseDTO poll = pollService.createPoll(dto);
+            return "redirect:/poll/" + poll.id();
         }
         catch (Exception e){
             model.addAttribute("error", "Erro ao criar enquete");
@@ -72,41 +68,21 @@ public class PollViewController {
     public String deletePoll(@PathVariable UUID id){
         pollService.delete(id);
 
-        return "redirect:/polls";
+        return "redirect:/polls/my-polls";
     }
 
     @GetMapping("/{id}")
     public String getPoll(@PathVariable UUID id, Model model, Authentication authentication){
-        try{
-            User user = (User) authentication.getPrincipal();
-            UUID userId = user.getId();
+        User user = (User) authentication.getPrincipal();
+        UUID userId = user.getId();
 
-            PollResponseDTO poll = pollService.getPollWithUserVote(id, userId);
-            model.addAttribute("authentication", authentication);
-            model.addAttribute("poll", poll);
-            model.addAttribute("userId", userId);
+        PollResponseDTO poll = pollService.getPoll(id);
 
-        } catch (Exception e){
-            PollResponseDTO poll = pollService.getPoll(id);
-            model.addAttribute("authentication", authentication);
-            model.addAttribute("poll", poll);
-        }
+        model.addAttribute("authentication", authentication);
+        model.addAttribute("poll", poll);
+        model.addAttribute("userId", userId);
 
         return "poll/poll-details";
-    }
-
-    private PollDTO convertToDto(PollForm form) {
-        List<OptionDTO> optionDTOs = form.getOptions().stream()
-                .map(opt -> new OptionDTO(opt.getText(), null))
-                .toList();
-
-        return new PollDTO(
-                form.getQuestion(),
-                form.getDuration(),
-                TimeUnit.valueOf(form.getTimeUnit()),
-                optionDTOs,
-                form.getVisibility()
-        );
     }
 
     private Map<String, String> getTimeUnits() {

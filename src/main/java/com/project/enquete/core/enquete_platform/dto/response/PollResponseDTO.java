@@ -28,19 +28,19 @@ public record PollResponseDTO(
         totalVotes = options.stream().mapToInt(OptionResponseDTO::votes).sum();
     }
 
-    public static PollResponseDTO withoutVoteInfo(UUID id, String question, Instant createdAt,
-                                                  Instant expiresAt, String timeLeft,
-                                                  List<OptionResponseDTO> options, String createdBy, String visibility, UUID userId, boolean isExpired, List<Long> winnerOptionIds) {
-        return new PollResponseDTO(id, question, createdAt, expiresAt, timeLeft,
-                options, 0, createdBy, visibility, userId, null, false, isExpired, winnerOptionIds);
-    }
-
-    public static PollResponseDTO withVoteInfo(UUID id, String question, Instant createdAt,
-                                               Instant expiresAt, String timeLeft,
-                                               List<OptionResponseDTO> options, String createdBy, String visibility, UUID userId,
-                                               Long userVoteOptionId, boolean isExpired, List<Long> winnerOptionIds) {
-        boolean userAlreadyVoted = userVoteOptionId != null;
-        return new PollResponseDTO(id, question, createdAt, expiresAt, timeLeft,
-                options, 0, createdBy, visibility, userId, userVoteOptionId, userAlreadyVoted, isExpired, winnerOptionIds);
-    }
+//    public static PollResponseDTO withoutVoteInfo(UUID id, String question, Instant createdAt,
+//                                                  Instant expiresAt, String timeLeft,
+//                                                  List<OptionResponseDTO> options, String createdBy, String visibility, UUID userId, boolean isExpired, List<Long> winnerOptionIds) {
+//        return new PollResponseDTO(id, question, createdAt, expiresAt, timeLeft,
+//                options, 0, createdBy, visibility, userId, null, false, isExpired, winnerOptionIds);
+//    }
+//
+//    public static PollResponseDTO withVoteInfo(UUID id, String question, Instant createdAt,
+//                                               Instant expiresAt, String timeLeft,
+//                                               List<OptionResponseDTO> options, String createdBy, String visibility, UUID userId,
+//                                               Long userVoteOptionId, boolean isExpired, List<Long> winnerOptionIds) {
+//        boolean userAlreadyVoted = userVoteOptionId != null;
+//        return new PollResponseDTO(id, question, createdAt, expiresAt, timeLeft,
+//                options, 0, createdBy, visibility, userId, userVoteOptionId, userAlreadyVoted, isExpired, winnerOptionIds);
+//    }
 }

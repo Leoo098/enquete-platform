@@ -1,4 +1,4 @@
-package com.project.enquete.core.enquete_platform.form;
+package com.project.enquete.core.enquete_platform.dto.form;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

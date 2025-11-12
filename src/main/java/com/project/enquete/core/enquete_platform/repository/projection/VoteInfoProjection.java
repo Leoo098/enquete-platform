@@ -1,8 +1,6 @@
 package com.project.enquete.core.enquete_platform.repository.projection;
 
-public interface OptionStats {
-    Long getId();
-    String getText();
+public interface VoteInfoProjection {
+    Long getOptionId();
     Long getVoteCount();
-    Double getPercentage();
 }

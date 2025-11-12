@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Registro</title>
+    <link rel="icon" th:href="@{/images/favicon.png}" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/style.css}">
@@ -50,11 +51,13 @@
             <div class="form-group">
                 <label for="password" class="form-label">Senha</label>
                 <input type="password" class="form-control" id="password"
+                       minlength="6"
+                       maxlength="60"
                        th:field="*{password}"
                        placeholder="Insira uma senha" required
                        onkeyup="validatePassword()">
             </div>
-            <small>Sua senha deve conter pelo menos 8 caracteres</small>
+            <small>Sua senha deve conter pelo menos 6 caracteres</small>
 
             <div class="form-group">
                 <label for="passwordConfirmation" class="form-label">Confirmar Senha</label>
@@ -79,33 +82,49 @@
 
 <script>
     function validatePassword() {
-    const password = document.getElementById('password');
-    const passwordConfirmation = document.getElementById('passwordConfirmation');
-    const message = document.getElementById('passwordMessage');
+        const password = document.getElementById('password');
+        const passwordConfirmation = document.getElementById('passwordConfirmation');
+        const message = document.getElementById('passwordMessage');
 
-    password.classList.remove('is-valid', 'is-invalid');
-    passwordConfirmation.classList.remove('is-valid', 'is-invalid');
-    message.classList.remove('valid-feedback', 'invalid-feedback');
+        password.classList.remove('is-valid', 'is-invalid');
+        passwordConfirmation.classList.remove('is-valid', 'is-invalid');
+        message.classList.remove('valid-feedback', 'invalid-feedback');
 
-    if (password.value === '' || passwordConfirmation.value === '') {
-        message.textContent = '';
-        return;
+        if (password.value === '' || passwordConfirmation.value === '') {
+            message.textContent = '';
+            return;
+        }
+
+        if (password.value === passwordConfirmation.value) {
+            password.classList.add('is-valid');
+            passwordConfirmation.classList.add('is-valid');
+            message.textContent = '✓ Senhas coincidem';
+            message.classList.add('valid-feedback');
+            submitBtn.disabled = false;
+        } else {
+            password.classList.add('is-invalid');
+            passwordConfirmation.classList.add('is-invalid');
+            message.textContent = '✗ As senhas não coincidem';
+            message.classList.add('invalid-feedback');
+            submitBtn.disabled = true;
+        }
     }
 
-    if (password.value === passwordConfirmation.value) {
-        password.classList.add('is-valid');
-        passwordConfirmation.classList.add('is-valid');
-        message.textContent = '✓ Senhas coincidem';
-        message.classList.add('valid-feedback');
-        submitBtn.disabled = false;
-    } else {
-        password.classList.add('is-invalid');
-        passwordConfirmation.classList.add('is-invalid');
-        message.textContent = '✗ As senhas não coincidem';
-        message.classList.add('invalid-feedback');
-        submitBtn.disabled = true;
-    }
-}
+    document.addEventListener('DOMContentLoaded', function() {
+    const inputs = document.querySelectorAll('input.is-invalid');
+
+    inputs.forEach(input => {
+        input.addEventListener('input', function() {
+            if (this.value.trim() !== '') {
+                this.classList.remove('is-invalid');
+                const errorDiv = this.parentNode.querySelector('.invalid-feedback');
+                if (errorDiv) {
+                    errorDiv.style.display = 'none';
+                }
+            }
+        });
+    });
+});
 </script>
 </body>
 </html>

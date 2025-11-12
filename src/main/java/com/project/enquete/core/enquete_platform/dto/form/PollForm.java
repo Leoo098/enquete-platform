@@ -1,6 +1,5 @@
-package com.project.enquete.core.enquete_platform.form;
+package com.project.enquete.core.enquete_platform.dto.form;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -15,6 +14,7 @@ import java.util.List;
 public class PollForm {
 
     @NotBlank(message = "A pergunta é obrigatória")
+    @Size(max = 100)
     private String question;
 
     @Min(value = 1, message = "A duração deve ser maior que 0")

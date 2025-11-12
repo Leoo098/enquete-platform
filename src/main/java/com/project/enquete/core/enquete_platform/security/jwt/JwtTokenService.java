@@ -2,15 +2,17 @@ package com.project.enquete.core.enquete_platform.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.enquete.core.enquete_platform.dto.response.OAuthTokenResponse;
+import com.project.enquete.core.enquete_platform.model.User;
+import com.project.enquete.core.enquete_platform.security.CustomRegisteredClientRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationServiceException;
-import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.JwtException;
+import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -20,6 +22,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -30,6 +34,74 @@ public class JwtTokenService {
     private final JwtDecoder jwtDecoder;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
+    private final JwtEncoder jwtEncoder;
+    private final CustomRegisteredClientRepository clientRepository;
+    @Value("${app.base-url}")
+    private String issuerUrl;
+
+    public String generateAccessToken(User user) {
+        try {
+            Instant now = Instant.now();
+            Instant expiry = now.plus(1, ChronoUnit.HOURS);
+
+            JwtClaimsSet claims = JwtClaimsSet.builder()
+                    .issuer(issuerUrl)
+                    .issuedAt(now)
+                    .expiresAt(expiry)
+                    .subject(user.getUsername())
+                    .claim("email", user.getEmail())
+                    .claim("roles", List.of(user.getRoles()))
+                    .build();
+
+
+            JwtEncoderParameters parameters = JwtEncoderParameters.from(claims);
+
+            System.out.println("=== DEBUG: Before encoding ===");
+            System.out.println("Claims: " + claims.getClaims());
+
+            Jwt jwt = jwtEncoder.encode(parameters);
+            System.out.println("=== DEBUG: Token generated successfully ===");
+
+            return jwt.getTokenValue();
+
+        } catch (Exception e) {
+            System.err.println("=== ERROR in generateAccessToken ===");
+            e.printStackTrace();
+            throw new AuthenticationServiceException("Failed to generate token: " + e.getMessage());
+        }
+    }
+
+    public String generateRefreshToken(User user) {
+        Instant now = Instant.now();
+        Instant expiry = now.plus(7, ChronoUnit.DAYS);
+
+        JwtClaimsSet claims = JwtClaimsSet.builder()
+                .issuer(issuerUrl)
+                .issuedAt(now)
+                .expiresAt(expiry)
+                .subject(user.getUsername())
+                .claim("token_type", "refresh")
+                .build();
+
+        JwtEncoderParameters parameters = JwtEncoderParameters.from(claims);
+        Jwt jwt = jwtEncoder.encode(parameters);
+
+        return jwt.getTokenValue();
+    }
+
+    public void storeTokensInCookies(HttpServletResponse response, User user){
+        String accessToken = generateAccessToken(user);
+        String refreshToken = generateRefreshToken(user);
+
+        System.out.println("AccessToken: " + accessToken);
+        System.out.println("RefreshToken: " + refreshToken);
+
+        ResponseCookie accessTokenCookie = createAccessTokenCookie(accessToken);
+        ResponseCookie refreshTokenCookie = createRefreshTokenCookie(refreshToken);
+
+        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+    }
 
     public String extractAccessToken(HttpServletRequest request){
         return extractToken(request, "access_token");
@@ -76,7 +148,7 @@ public class JwtTokenService {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("code", code);
-        params.add("redirect_uri", "http://localhost:8080/authorized");
+        params.add("redirect_uri", issuerUrl + "/authorized");
 
         // Headers configuration
         HttpHeaders headers = createOAuthHeaders();
@@ -86,7 +158,7 @@ public class JwtTokenService {
 
         try {
             ResponseEntity<OAuthTokenResponse> response = restTemplate.exchange(
-                    "http://localhost:8080/oauth2/token",
+                    issuerUrl + "/oauth2/token",
                     HttpMethod.POST,
                     request,
                     OAuthTokenResponse.class
@@ -116,7 +188,7 @@ public class JwtTokenService {
         RestTemplate restTemplate = new RestTemplate();
 
         ResponseEntity<OAuthTokenResponse> response = restTemplate.exchange(
-                "http://localhost:8080/oauth2/token",
+                issuerUrl + "/oauth2/token",
                 HttpMethod.POST,
                 request,
                 OAuthTokenResponse.class
@@ -135,10 +207,17 @@ public class JwtTokenService {
         );
     }
 
-    private static HttpHeaders createOAuthHeaders() {
+    private HttpHeaders createOAuthHeaders() {
+
+        var client = clientRepository.findByClientId("enquete-client");
+
+        if (client == null){
+            throw new AuthenticationServiceException("Client enquete-client not found");
+        }
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.setBasicAuth("enquete-client", "admin4002");
+        headers.setBasicAuth(client.getClientId(), client.getClientSecret());
         return headers;
     }
 

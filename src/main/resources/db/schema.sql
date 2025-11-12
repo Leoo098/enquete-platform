@@ -1,10 +1,10 @@
-create table users(
-    id uuid not null primary key,
-    username varchar(20) not null,
-    email varchar(255) not null,
-    password char(60) not null,
-    role varchar(20) not null default 'USER' check (role in('USER', 'ADMIN'),
-    social_login boolean default 'false')
+CREATE TABLE users (
+    id uuid NOT NULL PRIMARY KEY,
+    username varchar(20) NOT NULL,
+    email varchar(255) NOT NULL,
+    password varchar(60) NOT NULL,
+    role varchar(20) NOT NULL DEFAULT 'USER',
+    social_login boolean DEFAULT false
 );
 
 create table polls(
@@ -13,14 +13,14 @@ create table polls(
     created_at timestamp not null,
     expires_at timestamp not null,
     user_id uuid not null,
-    is_public boolean,
+    visibility varchar(8) not null,
 
     constraint fk_user foreign key (user_id) references "users"(id)
 );
 
 create table options(
     id bigserial primary key,
-    text varchar(50) not null,
+    text varchar(60) not null,
     poll_id uuid not null,
 
     constraint fk_poll foreign key (poll_id) references "polls"(id)
@@ -37,9 +37,9 @@ create table votes(
 );
 
 create table client(
-  id uuid not null primary key,
-  client_id varchar(150) not null,
-  client_secret varchar(400) not null,
-  redirect_uri varchar(200) not null,
-  scope varchar(50)
+    id uuid not null primary key,
+    client_id varchar(50) not null,
+    client_secret varchar(100) not null,
+    redirect_uri varchar(150) not null,
+    scope varchar(50)
 );
