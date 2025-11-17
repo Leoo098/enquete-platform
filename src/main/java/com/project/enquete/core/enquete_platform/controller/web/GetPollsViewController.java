@@ -40,7 +40,7 @@ public class GetPollsViewController {
         model.addAttribute("totalPages", pollsPage.getTotalPages());
         model.addAttribute("totalItems", pollsPage.getTotalElements());
         model.addAttribute("pageSize", size);
-        return "/polls/my-polls";
+        return "polls/my-polls";
     }
 
     @GetMapping("/voted-polls")
@@ -58,6 +58,6 @@ public class GetPollsViewController {
         model.addAttribute("totalPages", pollsPage.getTotalPages());
         model.addAttribute("totalItems", pollsPage.getTotalElements());
         model.addAttribute("pageSize", size);
-        return "/polls/voted-polls";
+        return "polls/voted-polls";
     }
 }

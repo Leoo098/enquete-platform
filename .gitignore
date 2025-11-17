@@ -19,6 +19,17 @@ target/
 *.iml
 *.ipr
 
+### Docker ###
+*.tar
+*.tar.gz
+*.img
+docker-images/
+images/
+.docker/
+docker.log
+docker-compose.override.yml
+.env
+
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
