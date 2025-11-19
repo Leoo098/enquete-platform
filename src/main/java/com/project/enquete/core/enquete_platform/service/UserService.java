@@ -27,6 +27,7 @@ public class UserService {
     public void save(UserDTO userDTO){
         User user = mapper.toEntity(userDTO);
         var password = user.getPassword();
+        user.setEmail(user.getEmail().toLowerCase());
         user.setPassword(encoder.encode(password));
         userRepository.save(user);
     }
@@ -37,7 +38,7 @@ public class UserService {
     }
 
     public User findByEmail(String email){
-        return userRepository.findByEmail(email);
+        return userRepository.findByEmailIgnoreCase(email);
     }
 
     public User findByUsername(String login) {
@@ -47,7 +48,7 @@ public class UserService {
     public User updateUsername(UsernameForm usernameForm){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User userPrincipal = (User) authentication.getPrincipal();
-        User user = userRepository.findByEmail(userPrincipal.getEmail());
+        User user = userRepository.findByEmailIgnoreCase(userPrincipal.getEmail());
 
         user.setUsername(usernameForm.getUsername());
 

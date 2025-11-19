@@ -166,7 +166,7 @@
         .btn-logout{
             background: white;
             color: red;
-            padding: 5px;
+            padding: 0.7rem;
             border: none;
             border-radius: 50px;
             cursor: pointer;
@@ -818,18 +818,80 @@
         .toast.error { background: #f44336; }
 
          @keyframes slideIn {
-                    to {
-                        opacity: 1;
-                        transform: translateX(0);
-                    }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
                 }
+            }
 
-                @keyframes fadeOut {
-                    to {
-                        opacity: 0;
-                        transform: translateX(100px);
-                    }
+            @keyframes fadeOut {
+                to {
+                    opacity: 0;
+                    transform: translateX(100px);
                 }
+            }
+
+         .offcanvas-header{
+               background: linear-gradient(135deg, rgba(2, 0, 36, 1) 0%, rgba(47, 97, 224, 1));
+               color: white;
+               padding: 1.4rem;
+           }
+
+           .offcanvas-body {
+               background-color: #d4d6d9;
+               padding: 0;
+           }
+
+           .mobile-nav-links {
+               list-style: none;
+               padding: 0;
+               margin: 0;
+           }
+
+           .mobile-nav-links li {
+               border-bottom: 1px solid #c7c7c7;
+           }
+
+           .mobile-nav-links a {
+               font-weight: 500;
+               display: block;
+               padding: 1rem;
+               color: #343a40;
+               text-decoration: none;
+           }
+
+           .mobile-nav-links a:hover {
+               background-color: #d9d9d9;
+           }
+
+           .mobile-dropdown-menu {
+               list-style: none;
+               padding: 0;
+               margin: 0;
+               background-color: #c8cacc;
+             li {
+               border-bottom: 1px solid #b8b8b8;
+             }
+           }
+
+           .mobile-dropdown-menu a {
+               padding-left: 2rem;
+           }
+
+           .navbar-toggler {
+               border-width: 2px;
+               border-color: #0c6d99;
+               padding: 0.25rem 0.5rem;
+           }
+
+           .navbar-toggler:focus {
+               box-shadow: none;
+           }
+
+           .navbar-toggler-icon-custom {
+               width: 1.5em;
+               height: 1.5em;
+           }
 
         footer {
             background: var(--dark-color);

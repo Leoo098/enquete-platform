@@ -33,7 +33,6 @@ public class JwtTokenService {
 
     private final JwtDecoder jwtDecoder;
     private final RestTemplate restTemplate;
-    private final ObjectMapper objectMapper;
     private final JwtEncoder jwtEncoder;
     private final CustomRegisteredClientRepository clientRepository;
     @Value("${app.base-url}")
@@ -53,19 +52,13 @@ public class JwtTokenService {
                     .claim("roles", List.of(user.getRoles()))
                     .build();
 
-
             JwtEncoderParameters parameters = JwtEncoderParameters.from(claims);
 
-            System.out.println("=== DEBUG: Before encoding ===");
-            System.out.println("Claims: " + claims.getClaims());
-
             Jwt jwt = jwtEncoder.encode(parameters);
-            System.out.println("=== DEBUG: Token generated successfully ===");
 
             return jwt.getTokenValue();
 
         } catch (Exception e) {
-            System.err.println("=== ERROR in generateAccessToken ===");
             e.printStackTrace();
             throw new AuthenticationServiceException("Failed to generate token: " + e.getMessage());
         }
@@ -92,9 +85,6 @@ public class JwtTokenService {
     public void storeTokensInCookies(HttpServletResponse response, User user){
         String accessToken = generateAccessToken(user);
         String refreshToken = generateRefreshToken(user);
-
-        System.out.println("AccessToken: " + accessToken);
-        System.out.println("RefreshToken: " + refreshToken);
 
         ResponseCookie accessTokenCookie = createAccessTokenCookie(accessToken);
         ResponseCookie refreshTokenCookie = createRefreshTokenCookie(refreshToken);
@@ -144,16 +134,13 @@ public class JwtTokenService {
     }
 
     public OAuthTokenResponse exchangeCodeForToken(String code) {
-        // Requisition parameters
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("code", code);
         params.add("redirect_uri", issuerUrl + "/authorized");
 
-        // Headers configuration
         HttpHeaders headers = createOAuthHeaders();
 
-        // POST requisition to /oauth2/token
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
 
         try {

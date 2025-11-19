@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<div th:replace="~{fragments/commons :: head}"></div>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <div th:replace="~{fragments/commons :: head}"></div>
+
     <title>Enquete - Sua plataforma de enquetes</title>
 </head>
 <body>
-    <div th:insert="~{fragments/commons :: header}"></div>
+<div th:replace="~{fragments/commons :: scripts}"></div>
+    <div th:replace="~{fragments/commons :: header}"></div>
 
 <section class="hero">
     <div class="container">
@@ -23,7 +25,7 @@
 <section class="features">
     <div class="container">
         <div class="section-title">
-            <h2>Por que usar o VoteAqui?</h2>
+            <h2>Por que usar o Enquete?</h2>
             <p>Nossa plataforma oferece tudo que você precisa para criar e compartilhar enquetes de forma simples e eficiente.</p>
         </div>
         <div class="features-grid">
@@ -125,8 +127,7 @@
     </div>
 
 </section>
-
-    <div th:replace="fragments/timer-script :: timer-script"></div>
+    <div th:replace="~{fragments/timer-script :: timer-script}"></div>
 
     <script>
         function redirectToPoll(element){
@@ -134,19 +135,16 @@
             window.location = '/poll/' + pollId;
         }
 
-function scrollToLeft() {
-    const container = document.getElementById('scrollContainer');
-    container.scrollBy({ left: -1200, behavior: 'smooth' });
-}
+        function scrollToLeft() {
+            const container = document.getElementById('scrollContainer');
+            container.scrollBy({ left: -1200, behavior: 'smooth' });
+        }
 
-function scrollToRight() {
-    const container = document.getElementById('scrollContainer');
-    container.scrollBy({ left: 1200, behavior: 'smooth' });
-}
+        function scrollToRight() {
+            const container = document.getElementById('scrollContainer');
+            container.scrollBy({ left: 1200, behavior: 'smooth' });
+        }
     </script>
-
-    <div th:insert="~{fragments/commons :: scripts}"></div>
-
 </body>
 
 <footer>

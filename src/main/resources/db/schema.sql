@@ -15,7 +15,7 @@ create table polls(
     user_id uuid not null,
     visibility varchar(8) not null,
 
-    constraint fk_user foreign key (user_id) references "users"(id)
+    constraint fk_user foreign key (user_id) references "users"(id) on delete cascade
 );
 
 create table options(
@@ -23,7 +23,7 @@ create table options(
     text varchar(60) not null,
     poll_id uuid not null,
 
-    constraint fk_poll foreign key (poll_id) references "polls"(id)
+    constraint fk_poll foreign key (poll_id) references "polls"(id) on delete cascade
 );
 
 create table votes(
@@ -32,7 +32,7 @@ create table votes(
     option_id bigint not null,
     voted_at timestamp with time zone not null,
 
-    constraint fk_user foreign key (user_id) references "users"(id),
+    constraint fk_user foreign key (user_id) references "users"(id) on delete cascade,
     constraint fk_option foreign key (option_id) references "options"(id)
 );
 

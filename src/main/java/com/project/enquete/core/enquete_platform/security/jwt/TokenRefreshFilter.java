@@ -38,9 +38,6 @@ public class TokenRefreshFilter extends OncePerRequestFilter {
             String accessToken = jwtTokenService.extractAccessToken(request);
             String refreshToken = jwtTokenService.extractRefreshToken(request);
 
-            System.out.println("Access Token: " + (accessToken != null ? "PRESENT" : "NULL"));
-            System.out.println("Refresh Token: " + (refreshToken != null ? "PRESENT" : "NULL"));
-
             if ((accessToken != null && blacklistService.isBlacklisted(accessToken)) ||
                     (refreshToken != null && blacklistService.isBlacklisted(refreshToken))){
                 logoutService.forceLogout(request, response);

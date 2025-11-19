@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
-<head>
+<head th:fragment="head">
     <meta charset="UTF-8">
     <link rel="icon" th:href="@{/images/favicon.png}" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -8,58 +8,112 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
-<header>
-    <div class="header-div" th:fragment="header">
-        <nav>
-            <div class="logo">
-                <a th:href="@{/}">
-                    <img th:src="@{/images/title.png}" alt="Enquete" class="logo">
-                </a>
-            </div>
-            <ul class="nav-links" th:if="${authentication != null}">
-                <li><a th:href="@{/}">Início</a></li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Enquetes
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" th:href="@{/polls/my-polls}">Minhas enquetes</a></li>
-                        <li><a class="dropdown-item" th:href="@{/polls/voted-polls}">Enquetes votadas</a></li>
-                    </ul>
-                </li>
-                <li><a th:href="@{/poll/create}">Criar</a></li>
-                <li>
-                    <div class="dropdown ms-auto">
-                        <button class="btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-person-circle me-2"></i><span th:text="${authentication.getName()} "></span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" th:href="@{/account}">
-                                <i class="bi bi-person me-2"></i>Minha Conta
-                            </a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><form th:action="@{/logout}" method="POST" class="dropdown-item p-0">
-                                    <button type="submit" class="btn-danger btn-logout">
-                                        <i class="bi bi-box-arrow-right me-2"></i>Sair
-                                    </button>
-                                </form>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-            </ul>
-
-            <ul class="nav-links" th:if="${authentication == null}">
-                <li>
-                    <a th:href="@{/login}" class="btn btn-primary">Entrar</a>
-                </li>
-            </ul>
-        </nav>
-    </div>
-</header>
 <body>
 <div th:fragment="scripts">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </div>
+<header th:fragment="header">
+    <div class="header-div">
+        <nav class="navbar navbar-expand-lg">
+            <div class="container-fluid">
+                <a class="navbar-brand" th:href="@{/}">
+                    <img th:src="@{/images/title.png}" alt="Enquete" class="logo" height="40">
+                </a>
+
+                <div class="d-none d-lg-block">
+                    <ul class="nav-links" th:if="${authentication != null}">
+                        <li><a th:href="@{/}">Início</a></li>
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle text-white" role="button"
+                               data-bs-toggle="dropdown" aria-expanded="false">
+                                Enquetes
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" th:href="@{/polls/my-polls}">Minhas enquetes</a></li>
+                                <li><a class="dropdown-item" th:href="@{/polls/voted-polls}">Enquetes votadas</a></li>
+                            </ul>
+                        </li>
+                        <li><a th:href="@{/poll/create}">Criar</a></li>
+                        <li>
+                            <div class="dropdown ms-auto">
+                                <button class="btn btn-outline-light dropdown-toggle" type="button"
+                                        data-bs-toggle="dropdown">
+                                    <i class="bi bi-person-circle me-2"></i><span
+                                        th:text="${authentication.getName()} "></span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" th:href="@{/account}">
+                                        <i class="bi bi-person me-2"></i>Minha Conta
+                                    </a></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li>
+                                        <form th:action="@{/logout}" method="POST">
+                                            <button type="submit" class="btn-danger btn-logout">
+                                                <i class="bi bi-box-arrow-right me-2"></i>Sair
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div th:if="${authentication == null}">
+                    <a th:href="@{/login}" class="btn btn-primary">Entrar</a>
+                </div>
+
+                <button th:if="${authentication != null}" class="navbar-toggler d-lg-none" type="button"
+                        data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-controls="mobileMenu">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+        </nav>
+
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="mobileMenu" aria-labelledby="mobileMenuLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="mobileMenuLabel">Menu</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
+                        aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <ul class="mobile-nav-links" th:if="${authentication != null}">
+                    <li><a th:href="@{/}">Início</a></li>
+                    <li class="nav-item dropdown">
+                        <a href="#" data-bs-toggle="collapse" data-bs-target="#pollsSubmenu"
+                           aria-expanded="false">
+                            Enquetes <i class="bi bi-chevron-down float-end"></i>
+                        </a>
+                        <ul class="mobile-dropdown-menu collapse" id="pollsSubmenu">
+                            <li><a th:href="@{/polls/my-polls}">Minhas enquetes</a></li>
+                            <li><a th:href="@{/polls/voted-polls}">Enquetes votadas</a></li>
+                        </ul>
+                    </li>
+                    <li><a th:href="@{/poll/create}">Criar</a></li>
+                    <li class="nav-item dropdown">
+                        <a href="#" data-bs-toggle="collapse" data-bs-target="#accountSubmenu" aria-expanded="false">
+                            <i class="bi bi-person-circle me-2"></i>
+                            <span th:text="${authentication.getName()}"></span>
+                            <i class="bi bi-chevron-down float-end"></i>
+                        </a>
+                        <ul class="mobile-dropdown-menu collapse" id="accountSubmenu">
+                            <li><a th:href="@{/account}">
+                                <i class="bi bi-person me-2"></i>Minha Conta
+                            </a></li>
+                        </ul>
+                    <li>
+                        <form th:action="@{/logout}" method="POST">
+                            <button type="submit" class="btn-logout">
+                                <i class="bi bi-box-arrow-right me-2"></i>Sair
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</header>
 </body>
 </html>

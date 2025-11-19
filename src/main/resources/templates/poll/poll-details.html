@@ -283,7 +283,7 @@
 
         </div>
 
-        <div class="toast align-items-center text-white bg-success border-0 position-fixed top-0 end-0 m-3" id="copyToast">
+        <div class="toast align-items-center text-white bg-success fade hide" id="copyToast">
             <div class="d-flex">
                 <div class="toast-body">
                     Link copiado com sucesso!
@@ -293,7 +293,7 @@
         </div>
     </div>
 
-    <div th:replace="fragments/timer-script :: timer-script"></div>
+    <div th:replace="~{fragments/timer-script :: timer-script}"></div>
 
     <script>
         const currentUrl = window.location.href;
