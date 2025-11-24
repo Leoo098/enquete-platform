@@ -9,7 +9,7 @@
     <div th:insert="~{fragments/commons :: header}"></div>
 
     <div class="container">
-        <div class="card" th:attr="data-poll-id=${poll.id}">
+        <div class="card card-details" th:attr="data-poll-id=${poll.id}">
             <div class="card-header">
                 <h2 class="card-title" th:text="${poll.question}"></h2>
                 <div th:if="${poll.userId() == userId}">

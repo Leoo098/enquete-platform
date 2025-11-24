@@ -4,7 +4,9 @@ CREATE TABLE users (
     email varchar(255) NOT NULL,
     password varchar(60) NOT NULL,
     role varchar(20) NOT NULL DEFAULT 'USER',
-    social_login boolean DEFAULT false
+    social_login boolean DEFAULT false,
+    demo_user boolean DEFAULT false,
+    created_at timestamp
 );
 
 create table polls(

@@ -49,6 +49,13 @@
             border-radius: 8px;
             font-weight: 600;
         }
+        .btn-login-demo{
+            background: linear-gradient(90deg,rgba(2, 0, 36, 1) 0%, rgba(82, 25, 196, 1) 50%);
+            border: none;
+            height: 50px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
         .social-login .btn {
             width: 45px;
             height: 45px;
@@ -97,6 +104,33 @@
                         <button type="submit" class="btn btn-login btn-primary w-100 text-white mb-3">
                             Entrar
                         </button>
+                    </form>
+                    <div class="text-center mb-4"><span class="text-muted">ou entre como</span></div>
+
+                    <button type="submit" class="btn btn-login-demo btn-primary w-100 text-white mb-3" data-bs-toggle="modal" data-bs-target="#backdropDemo">
+                        Usuário teste
+                    </button>
+
+                    <div class="modal fade" id="backdropDemo" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="backdropDemoLabel">Usuário de demonstração</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Tem certeza que deseja criar um usuário de teste? A conta é temporária e será excluída automaticamente.
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Não</button>
+                                    <form th:action="@{/auth/demo}" method="POST">
+                                        <button type="submit" class="btn btn-primary">Sim</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                         <div class="text-center mb-4">
                             <span class="text-muted">ou entre com</span>
                         </div>
@@ -108,7 +142,6 @@
                         <div class="text-center mt-3">
                             <p>Não tem uma conta? <a th:href="@{/register}" class="text-decoration-none">Cadastre-se</a></p>
                         </div>
-                    </form>
                 </div>
             </div>
         </div>

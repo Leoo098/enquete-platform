@@ -37,14 +37,14 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
                                                    UnifiedAuthenticationSuccessHandler successHandler,
                                                    CustomLogoutHandler customLogoutHandler,
-                                                    JwtAuthenticationFilter jwtAuthenticationFilter,
+                                                   JwtAuthenticationFilter jwtAuthenticationFilter,
                                                    TokenRefreshFilter tokenRefreshFilter) throws Exception{
         return http
                 .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 .httpBasic(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/error", "/index", "/static/**", "/css/**", "/images/**").permitAll()
-                        .requestMatchers("/login/**", "/register").permitAll()
+                        .requestMatchers("/login/**", "/register", "/auth/demo").permitAll()
                         .requestMatchers(HttpMethod.POST, "/clients").hasRole("ADMIN")
 
                         .anyRequest().authenticated()

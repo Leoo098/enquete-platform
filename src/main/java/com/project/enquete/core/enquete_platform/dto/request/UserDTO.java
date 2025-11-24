@@ -16,5 +16,6 @@ public record UserDTO(@NotBlank(message = "Campo obrigatório")
                       @NotBlank(message = "Campo obrigatório")
                       String password,
                       @NotBlank
-                      String passwordConfirmation) {
+                      String passwordConfirmation
+) {
 }

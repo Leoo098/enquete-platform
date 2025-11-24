@@ -68,10 +68,6 @@
                 <div id="passwordMessage" class="form-text"></div>
             </div>
 
-            <div th:if="${#fields.hasErrors('passwordsMatch')}" class="alert alert-danger">
-                <span th:errors="*{passwordsMatch}"></span>
-            </div>
-
             <button type="submit" class="btn btn-login btn-primary w-100 text-white mb-3" id="submitBtn">
                 Confirmar
             </button>

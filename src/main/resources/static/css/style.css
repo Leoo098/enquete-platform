@@ -37,8 +37,8 @@
             margin-bottom: 75px;
             width: 100%;
                 .header-div{
-                        width: 90%;
-                    max-width: 1200px;
+                    width: 95%;
+                    max-width: 1300px;
                     margin: 0 auto;
                     padding: 0 20px;
                 }
@@ -93,28 +93,20 @@
             padding: 1rem 0;
         }
 
-        .logo {
-            font-size: 1.8rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-        }
-
-        .logo a{
-            text-decoration: none;
-            color: white;
-        }
-
-        .logo i {
-            margin-right: 10px;
-            font-size: 2rem;
-        }
-
         .nav-links {
             display: flex;
             align-items: center;
             list-style: none;
             height: 100%; /* */
+            .nav-btn{
+                margin-top: 10px;
+            }
+            .or{
+                font-weight: 500;
+                margin-top: 10px;
+                margin-left: -20px;
+                margin-right: -20px;
+            }
         }
 
         .nav-links li {
@@ -135,6 +127,10 @@
             opacity: 0.8;
         }
 
+        #backdropDemo{
+            color: black;
+        }
+
         .dropdown-menu{
             background-color:#193f8c;
             border-radius: 10px;
@@ -144,6 +140,20 @@
         .dropdown-item{
             border-radius: 20px;
             margin-bottom: 10px;
+        }
+
+        .popover-btn{
+            background: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            line-height: 1rem;
+            margin-left: -30px;
+            .bi{
+               font-size: 30px;
+                color: #f2ab07;
+            }
         }
 
         .btn {
@@ -490,10 +500,14 @@
             overflow: hidden;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
             transition: transform 0.3s ease;
-            max-width: 750px;
+            max-width: 550px;
             min-width: 540px;
             margin: 0 auto;
             scrollbar-color: gray #e3e1e1;
+        }
+
+        .card-details{
+            max-width: 750px;
         }
 
         .user-card{
@@ -876,6 +890,30 @@
 
            .mobile-dropdown-menu a {
                padding-left: 2rem;
+           }
+
+           .mobile-nav-links-loggedout {
+               list-style: none;
+               padding: 0;
+               margin: 0;
+               .or{
+                   text-align: center;
+                   font-weight: 600;
+               }
+           }
+
+           .mobile-nav-links-loggedout li {
+               margin-bottom: 0.5rem;
+               border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+               padding: 0.5rem 0;
+               .btn{
+                   width: 100%;
+                   color: white;
+                   padding: 1rem;
+               }
+               .btn:hover{
+                   background-color: blue;
+               }
            }
 
            .navbar-toggler {

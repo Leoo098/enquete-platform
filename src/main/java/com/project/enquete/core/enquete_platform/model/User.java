@@ -2,7 +2,9 @@ package com.project.enquete.core.enquete_platform.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,6 +36,11 @@ public class User {
 
     @Column(name = "social_login")
     private Boolean socialLogin = false;
+
+    private Boolean demoUser = false;
+
+    @CreationTimestamp
+    private Instant createdAt;
 
     public List<String> getRoles(){
         return List.of(role.name());

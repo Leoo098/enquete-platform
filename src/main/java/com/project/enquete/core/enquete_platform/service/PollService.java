@@ -46,8 +46,6 @@ public class PollService {
         pollRepository.save(poll);
 
         return getPoll(poll.getId());
-
-//        return mapper.toResponseDTO(poll, pollDTO);
     }
 
     public void delete(UUID id){
