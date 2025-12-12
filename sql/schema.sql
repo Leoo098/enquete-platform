@@ -10,7 +10,7 @@ CREATE TABLE users (
 );
 
 create table polls(
-    id uuid primary key,
+    id uuid primary key not null,
     question varchar(100) not null,
     created_at timestamp not null,
     expires_at timestamp not null,
@@ -21,7 +21,7 @@ create table polls(
 );
 
 create table options(
-    id bigserial primary key,
+    id bigserial primary key not null,
     text varchar(60) not null,
     poll_id uuid not null,
 
@@ -29,7 +29,7 @@ create table options(
 );
 
 create table votes(
-    id bigserial primary key,
+    id bigserial primary key not null,
     user_id uuid not null,
     option_id bigint not null,
     voted_at timestamp with time zone not null,
@@ -38,17 +38,17 @@ create table votes(
     constraint fk_option foreign key (option_id) references "options"(id)
 );
 
-create table client(
+create table clients(
     id uuid not null primary key,
     client_id varchar(50) not null,
     client_secret varchar(100) not null,
     redirect_uri varchar(150) not null,
-    scope varchar(50)
+    scope varchar(50) not null
 );
 
 -- Client padrão para teste
-INSERT INTO client (id, client_id, client_secret, redirect_uri, scope)
-VALUES (
+INSERT INTO clients(id, client_id, client_secret, redirect_uri, scope)
+VALUES(
     gen_random_uuid(),
     'enquete-client',
     'client-secret-teste',

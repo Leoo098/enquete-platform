@@ -1,4 +1,6 @@
-<img src="assets/logo-readme.png" style="display: block; margin: 0 auto; margin-block: 50px" alt="logo" height="80">
+<div align="center">
+  <img src="assets/logo-readme.png" alt="logo" height="80">
+</div>
 
 ![Java](https://img.shields.io/badge/java-21-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
 ![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)
@@ -148,6 +150,11 @@ docker-compose up
 ```shell
 http://localhost:8080
 ```
+
+## ♦ Diagrama do Banco de Dados
+
+<img src="assets/db_diagram.jpeg" style="display: block; margin: 0 auto; margin-block: 50px" alt="db">
+
 
 <h3>📃 License</h3>
 
