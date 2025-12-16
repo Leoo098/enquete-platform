@@ -8,6 +8,8 @@ spring:
     url: ${DATABASE_URL}
     hikari:
       connection-init-sql: SET TIME ZONE 'UTC'
+      max-lifetime: 240000
+      idle-timeout: 60000
   jpa:
     show-sql: false
     hibernate:
